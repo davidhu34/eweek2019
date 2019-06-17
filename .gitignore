@@ -1,5 +1,6 @@
 src/configs/index.js
 server/configs.js
+server/bundle.js
 dist/
 # Logs
 logs
