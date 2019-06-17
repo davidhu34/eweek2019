@@ -1,0 +1,3 @@
+export const PROD_PANEL_KEY = 'PROD_PANEL'
+export const COUNT_PANEL_KEY = 'COUNT_PANEL'
+export const SCHOOL_PANEL_KEY = 'SCHOOL_PANEL'
