@@ -1,8 +1,11 @@
 const uiInit = {
     inited: null,
-    product: null,
-    count: 1,
+    submitting: false,
+    editing: false, 
+    scanning: false,
     accordionIndex: null,
+    product: null,
+    count: 1
 }
 
 export const ui = ( state = uiInit, action ) => {
@@ -10,10 +13,37 @@ export const ui = ( state = uiInit, action ) => {
         case 'REFRESH':
             return {
                 ...state,
+                inited: false,
                 product: null,
                 count: 1,
-                accordionIndex: nul,
-                inited: false
+                accordionIndex: null
+            }
+        case 'UI_EDIT_PURCHASE':
+            return {
+                ...state,
+                product: null,
+                count: 1,
+                accordionIndex: null,
+                editing: true,
+            }
+        case 'CART_PUT':
+        case 'CART_CANCEL':
+            return {
+                ...state,
+                product: null,
+                count: 1,
+                accordionIndex: null,
+                editing: false,
+            }
+        case 'SUBMIT_PURCHASE_START':
+            return {
+                ...state,
+                submitting: true
+            }
+        case 'SUBMIT_PURCHASE_END':
+            return {
+                ...state,
+                submitting: false
             }
         case 'INIT_DATA':
             return {
@@ -27,6 +57,13 @@ export const ui = ( state = uiInit, action ) => {
                 count: 1,
                 accordionIndex: null
             }
+        case 'UI_SCHOOL_SET':
+                return {
+                    ...state,
+                    school: action.school,
+                    count: 1,
+                    accordionIndex: null
+                }
         case 'UI_COUNT_SET':
             return {
                 ...state,

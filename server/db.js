@@ -21,6 +21,7 @@ module.exports = ( uri ) => {
 
     const schoolDB = cloudant.db.use('school')
     const productDB = cloudant.db.use('product')
+    const purchaseDB = cloudant.db.use('history')
 
     let schools = []
     let products = []
@@ -34,7 +35,8 @@ module.exports = ( uri ) => {
         },
         getProducts: () => {
             return productDB.list({include_docs: true}).then(setListData('products'))
-        }
+        },
+        purchase: (data) => purchaseDB.insert(data).then(result => result)
     }
 
     return db

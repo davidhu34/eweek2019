@@ -5,12 +5,13 @@ import { Loader, Accordion } from 'semantic-ui-react'
 import { initData, setAccordion } from '../actions'
 import { PROD_PANEL_KEY, COUNT_PANEL_KEY, SCHOOL_PANEL_KEY } from '../consts'
 
+import SchoolList from './SchoolList'
 import ProductList from './ProductList'
 import CountPanel from './CountPanel'
 
-class RootAccordion extends Component {
+class ProductAccordion extends Component {
 
-    accordionOrder = [PROD_PANEL_KEY,COUNT_PANEL_KEY]//, SCHOOL_PANEL_KEY]
+    accordionOrder = [PROD_PANEL_KEY,COUNT_PANEL_KEY]
     accordionGen = (key) => {
         switch(key) {
             case PROD_PANEL_KEY:
@@ -33,9 +34,9 @@ class RootAccordion extends Component {
                     header: '學校',
                     getData: () => {
                         const { school } = this.props.ui
-                        return school? product.name: ''
+                        return school? school.name: ''
                     },
-                    content: <CountPanel />
+                    content: <SchoolList />
                 }
             default:
                 return {}
@@ -59,16 +60,16 @@ class RootAccordion extends Component {
     componentDidMount = () => initData()
 
     render() {
-        const { accordionIndex, inited } = this.props.ui
-
+        const { accordionIndex, inited, scanning, editing } = this.props.ui
+        const show = inited && !scanning && editing
         const panels = this.getAccordionPanels(accordionIndex)
 
-        return inited
+        return show
             ? <Accordion
                 activeIndex={accordionIndex}
                 panels={panels}
                 onTitleClick={this.handleTitleClick} />
-            : <Loader active inline='centered' />
+            : null
     }
 }
 
@@ -78,4 +79,4 @@ export default connect(
         setAccordion: (index) => dispatch(setAccordion(index)),
         initData: () => dispatch(initData()),
     })
-)(RootAccordion)
+)(ProductAccordion)

@@ -7,7 +7,7 @@ import { selectProd } from '../actions'
 const ProductList = ({ product, selectProd }) => <Container>
     {product.list.map( (prod, index) => <div
         onClick={ (e) => selectProd(index)}
-        key={prod.key}>
+        key={prod.alias}>
         {prod.name}
     </div>)}
 </Container>
