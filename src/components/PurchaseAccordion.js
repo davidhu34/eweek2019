@@ -7,7 +7,6 @@ import { PROD_PANEL_KEY, COUNT_PANEL_KEY } from '../consts'
 
 import { EDITPURCHASE } from '../consts/pages'
 
-import SchoolList from './SchoolList'
 import ProductList from './ProductList'
 import CountPanel from './CountPanel'
 

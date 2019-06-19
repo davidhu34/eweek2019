@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Sidebar, Menu, Container, Grid, Button, List } from 'semantic-ui-react'
+import { Container, Button, List } from 'semantic-ui-react'
 
 import { editPurchase } from '../actions'
 
@@ -13,8 +13,8 @@ class CartDisplay extends Component {
     render() {
         const { ui, cart, editPurchase } = this.props
 
-        return <Container style={{
-            visibility: !ui.scanning && !ui.editing? 'visible': 'hidden'
+        return <Container textAlign='center' style={{
+            visibility: ui.page === 'MAIN'? 'visible': 'hidden'
         }}>
             <Button onClick={() => editPurchase(null)}>buy somthing</Button>
             <List>

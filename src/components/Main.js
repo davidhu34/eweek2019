@@ -1,19 +1,19 @@
 import React, { Component } from 'react'
-import { Container, Header, Loader } from 'semantic-ui-react'
+import { Container, Header } from 'semantic-ui-react'
 
-import PurchaseEditor from './PurchaseEditor'
+import Loading from './Loading'
 import SchoolEditor from './SchoolEditor'
-import Footer from './Footer'
+import PurchaseEditor from './PurchaseEditor'
 import CartDisplay from './CartDisplay'
+import Footer from './Footer'
 
 const Main = () => {
     return <Container>
         <Header textAlign='center'>Eweek 2019</Header>
-
+        <Loading />
         <SchoolEditor />
         <PurchaseEditor />
         <CartDisplay />
-        <Loader active inline='centered' />
         <Footer />
     </Container>
 }

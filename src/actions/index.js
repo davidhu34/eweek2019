@@ -48,13 +48,18 @@ export const selectSchool = (index) => (dispatch, getState) => {
         type: 'SCHOOL_SELECT',
         index: index
     })
-
-    const { school } = getState()
-    dispatch({
-        type: 'UI_SCHOOL_SET',
-        school: school.list[index]
-    })
+    dispatch(schoolCancel(null))
 }
+
+const schoolPut = (school) => ({
+    type: 'UI_SCHOOL_SET',
+    school: school
+})
+
+const schoolCancel = (param) => ({
+    type: 'UI_SCHOOL_SET',
+    school: null
+})
 
 export const setCount = (count) => ({
     type: 'PURCHASE_COUNT_SET',
@@ -94,14 +99,19 @@ const cartCancel = (param) => changePage(MAIN)
 
 const cartSubmit = () => (dispatch, getState) => {
 
-    const { ui, cart } = getState()
-    const { school } = ui
+    const { ui, cart, school } = getState()
+    const { list, activeIndex } = school
+
+    const activeSchool = list[activeIndex]
 
     dispatch({ type: 'CART_SUBMIT_START' })
 
     axios.post(API_ROOT+'/buyall', {
-        school: school.alias,
-        purchases: cart.list
+        school: activeSchool.alias,
+        purchases: cart.list.map( p => ({
+            count: p.count,
+            product: p.product.alias
+        }))
     }).then( res => {
         console.log(res);
         dispatch({
@@ -125,6 +135,8 @@ const cartClear = (param) => ({
 export const footerDispatchers = dispatch => {
 
     const actionMap = {
+        schoolPut,
+        schoolCancel,
         cartPut,
         cartCancel,
         cartSubmit,
@@ -137,32 +149,4 @@ export const footerDispatchers = dispatch => {
     })
 
     return dispatchers
-}
-
-
-export const submitPurchase = () => (dispatch, getState) => {
-
-    const { school, product, count } = getState().ui
-
-    dispatch({ type: 'SUBMIT_PURCHASE_START' })
-
-    axios.post(API_ROOT+'/buy', {
-        school: school.alias,
-        product: product.alias,
-        count: count
-    }).then( res => {
-        console.log(res);
-        dispatch({
-            type: 'SUBMIT_PURCHASE_END',
-            success: true,
-            purchase: {}
-        })
-    })
-    .catch(err => {
-        dispatch({
-            type: 'SUBMIT_PURCHASE_END',
-            error: err,
-            success: false
-        })
-    })
 }

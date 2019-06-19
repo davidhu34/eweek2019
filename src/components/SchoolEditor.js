@@ -1,33 +1,29 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Button, Container } from 'semantic-ui-react'
+import { Button, Container, Divider } from 'semantic-ui-react'
 
-import { initData } from '../actions'
 import { MAIN, QRSCAN, EDITSCHOOL } from '../consts/pages'
 
 import { chooseSchool, changePage } from '../actions'
 
 import SchoolList from './SchoolList'
 
-class SchoolEditor extends Component {
+const SchoolEditor = ({ ui, school, chooseSchool }) => {
 
-    componentDidMount = () => initData()
+    const { page, inited } = ui
+    const { list, activeIndex } = school
 
-    render() {
-        const { page } = this.props.ui
-        const { list, activeIndex } = this.props.school
-
-        const school = list[activeIndex]
-        return page === MAIN
-            ? <Container>
-                <Button onClick={() => this.props.chooseSchool()}>
-                    {school? school.name: 'choose school'}
-                </Button>
-            </Container>
-            : page === EDITSCHOOL
-                ? <SchoolList />
-                : null
-    }
+    const activeSchool = list[activeIndex]
+    return page === MAIN && inited
+        ? <Container textAlign='center'>
+            <Button onClick={() => chooseSchool()}>
+                {activeSchool? activeSchool.name: 'choose school'}
+            </Button>
+            <Divider segment hidden></Divider>
+        </Container>
+        : page === EDITSCHOOL
+            ? <SchoolList />
+            : null
 }
 
 export default connect(

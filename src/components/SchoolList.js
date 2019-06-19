@@ -8,7 +8,7 @@ const SchoolList = ({ school, selectSchool }) => <Container>
     {school.list.map( (s, index) => <div
         onClick={ (e) => selectSchool(index)}
         key={s.alias}>
-        {s.name}
+        {`${s.name} ${school.activeIndex === index? '*': ''}`}
     </div>)}
 </Container>
 

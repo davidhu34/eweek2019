@@ -33,17 +33,19 @@ module.exports = (app, db) => {
     app.post('*/buy', (req, res, next) => {
         console.log('bought',JSON.stringify(req.body));
         db.purchase(req.body).then( data => {
-            console.log('bought', data);
-            res.send(data);
+            console.log('bought', data)
+            res.send(data)
         });
     });
 
     app.post('*/buyall', (req, res, next) => {
         console.log('bought all',JSON.stringify(req.body));
-        // db.purchase(req.body).then( data => {
-        //     console.log('bought', data);
-        //     res.send(data);
-        // });
+        const { school, purchases } = req.body
+        const list = purchases.map( p => ({ ...p, school }))
+        db.purchaseBulk(list).then( data => {
+            console.log('bought all', data)
+            res.send(data)
+        });
     });
 
     return { refreshDB }

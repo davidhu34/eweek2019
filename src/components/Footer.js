@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Sidebar, Menu, Container, Grid, Button } from 'semantic-ui-react'
+import { Sidebar, Container, Grid, Button } from 'semantic-ui-react'
 
 import { footerDispatchers } from '../actions'
 import { MAIN, QRSCAN, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
@@ -23,8 +23,13 @@ class Footer extends Component {
                     text: 'CANCEL',
                     onClick: () => this.props.cartCancel()
                 },{
-                    text: 'ADD',
+                    text: 'SAVE',
                     onClick: () => this.props.cartPut()
+                }]
+            case EDITSCHOOL:
+                return [{
+                    text: 'CANCEL',
+                    onClick: () => this.props.schoolCancel()
                 }]
             case MAIN:
                 return [{
