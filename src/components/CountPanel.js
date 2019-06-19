@@ -26,7 +26,7 @@ const CountPanel = ({ count, setCount }) => <Container textAlign='center'>
 
 
 export default connect(
-  ({ ui }) => ({ count: ui.count }),
+  ({ purchase }) => ({ count: purchase.count }),
   dispatch => ({
       setCount: (index) => dispatch(setCount(index))
   })

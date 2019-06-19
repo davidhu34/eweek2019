@@ -11,7 +11,6 @@ export const school = ( state = schoolInit, action ) => {
                 activeIndex: null,
                 list: action.schools
             }
-        case 'SCHOOL_FETCHED':
         case 'SCHOOL_SELECT':
             return {
                 ...state,

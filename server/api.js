@@ -30,13 +30,20 @@ module.exports = (app, db) => {
         res.send({ schools: db.schools, products: db.products })
     });
 
-
     app.post('*/buy', (req, res, next) => {
         console.log('bought',JSON.stringify(req.body));
         db.purchase(req.body).then( data => {
             console.log('bought', data);
             res.send(data);
         });
+    });
+
+    app.post('*/buyall', (req, res, next) => {
+        console.log('bought all',JSON.stringify(req.body));
+        // db.purchase(req.body).then( data => {
+        //     console.log('bought', data);
+        //     res.send(data);
+        // });
     });
 
     return { refreshDB }

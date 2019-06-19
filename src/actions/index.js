@@ -1,34 +1,7 @@
 import axios from 'axios'
 
 import { API_ROOT } from '../configs'
-
-export const submitPurchase = () => (dispatch, getState) => {
-
-    const { school, product, count } = getState().ui
-    
-    dispatch({ type: 'SUBMIT_PURCHASE_START' })
-
-    axios.post(API_ROOT+'/buy', {
-        school: school.alias,
-        product: product.alias,
-        count: count
-    }).then( res => {
-        console.log(res);
-        dispatch({
-            type: 'SUBMIT_PURCHASE_END',
-            success: true,
-            purchase: {}
-        })
-    })
-    .catch(err => {
-        dispatch({
-            type: 'SUBMIT_PURCHASE_END',
-            error: err,
-            success: false
-        })
-    })
-}
-
+import { MAIN, QRSCAN, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
 
 export const initData = () => (dispatch, getState) => {
     if (isNaN(getState().ui.inited)) {
@@ -52,16 +25,21 @@ export const initData = () => (dispatch, getState) => {
         })
 }
 
+export const changePage = (page) => ({
+    type: 'UI_CHANGE_PAGE',
+    page: page
+})
+
 export const selectProd = (index) => (dispatch, getState) => {
     dispatch({
         type: 'PRODUCT_SELECT',
         index: index
     })
 
-    const { product } = getState()
+    const { list, activeIndex } = getState().product
     dispatch({
-        type: 'UI_PRODUCT_SET',
-        product: product.list[index]
+        type: 'PURCHASE_PRODUCT_SELECT',
+        product: list[activeIndex]
     })
 }
 
@@ -79,35 +57,67 @@ export const selectSchool = (index) => (dispatch, getState) => {
 }
 
 export const setCount = (count) => ({
-    type: 'UI_COUNT_SET',
+    type: 'PURCHASE_COUNT_SET',
     count: count
 })
 
-export const setAccordion = (index) => ({
-    type: 'UI_ACCORDION_SET',
+export const setPurchaseAccordion = (index) => ({
+    type: 'PURCHASE_ACCORDION_SET',
     index: index
 })
 
-export const editPurchase = () => ({
-    type: 'UI_EDIT_PURCHASE',
-})
+export const editPurchase = (index) => (dispatch, getState) => {
+    dispatch(changePage(EDITPURCHASE))
+    if (index != null) {
+        const { list } = getState().cart
+        const { product, count } = list[index]
+        dispatch({
+            type: 'PURCHASE_EDIT',
+            product,
+            count,
+            index
+        })
+    }
+}
 
 const cartPut = (param) => (dispatch, getState) => {
-    const { product, count } = getState().ui
+    const { product, count } = getState().purchase
     dispatch({
         type: 'CART_PUT',
         product,
         count
     })
+    dispatch(changePage(MAIN))
 }
 
-const cartCancel = (param) => ({
-    type: 'CART_CANCEL'
-})
+const cartCancel = (param) => changePage(MAIN)
 
-const cartSubmit = (param) => ({
-    type: 'CART_SUBMIT'
-})
+const cartSubmit = () => (dispatch, getState) => {
+
+    const { ui, cart } = getState()
+    const { school } = ui
+
+    dispatch({ type: 'CART_SUBMIT_START' })
+
+    axios.post(API_ROOT+'/buyall', {
+        school: school.alias,
+        purchases: cart.list
+    }).then( res => {
+        console.log(res);
+        dispatch({
+            type: 'CART_SUBMIT_END',
+            success: true,
+        })
+    })
+    .catch(err => {
+        dispatch({
+            type: 'CART_SUBMIT_END',
+            error: err,
+            success: false
+        })
+    })
+}
+
 const cartClear = (param) => ({
     type: 'CART_CLEAR'
 })
@@ -127,4 +137,32 @@ export const footerDispatchers = dispatch => {
     })
 
     return dispatchers
+}
+
+
+export const submitPurchase = () => (dispatch, getState) => {
+
+    const { school, product, count } = getState().ui
+
+    dispatch({ type: 'SUBMIT_PURCHASE_START' })
+
+    axios.post(API_ROOT+'/buy', {
+        school: school.alias,
+        product: product.alias,
+        count: count
+    }).then( res => {
+        console.log(res);
+        dispatch({
+            type: 'SUBMIT_PURCHASE_END',
+            success: true,
+            purchase: {}
+        })
+    })
+    .catch(err => {
+        dispatch({
+            type: 'SUBMIT_PURCHASE_END',
+            error: err,
+            success: false
+        })
+    })
 }

@@ -11,11 +11,15 @@ export const product = ( state = productInit, action ) => {
                 activeIndex: null,
                 list: action.products
             }
-        case 'PRODUCT_FETCHED':
         case 'PRODUCT_SELECT':
             return {
                 ...state,
                 activeIndex: action.index
+        }
+        case 'UI_CHANGE_PAGE':
+            return {
+                ...state,
+                activeIndex: null
             }
         default:
             return state

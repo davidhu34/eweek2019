@@ -2,14 +2,16 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Loader, Accordion } from 'semantic-ui-react'
 
-import { initData, setAccordion } from '../actions'
-import { PROD_PANEL_KEY, COUNT_PANEL_KEY, SCHOOL_PANEL_KEY } from '../consts'
+import { initData, setPurchaseAccordion } from '../actions'
+import { PROD_PANEL_KEY, COUNT_PANEL_KEY } from '../consts'
+
+import { EDITPURCHASE } from '../consts/pages'
 
 import SchoolList from './SchoolList'
 import ProductList from './ProductList'
 import CountPanel from './CountPanel'
 
-class ProductAccordion extends Component {
+class PurchaseAccordion extends Component {
 
     accordionOrder = [PROD_PANEL_KEY,COUNT_PANEL_KEY]
     accordionGen = (key) => {
@@ -18,7 +20,7 @@ class ProductAccordion extends Component {
                 return {
                     header: '材料',
                     getData: () => {
-                        const { product } = this.props.ui
+                        const { product } = this.props.purchase
                         return product? product.name: ''
                     },
                     content: <ProductList />
@@ -26,17 +28,8 @@ class ProductAccordion extends Component {
             case COUNT_PANEL_KEY:
                 return {
                     header: '數量',
-                    getData: () => this.props.ui.count || 1,
+                    getData: () => this.props.purchase.count || 1,
                     content: <CountPanel />
-                }
-            case SCHOOL_PANEL_KEY:
-                return {
-                    header: '學校',
-                    getData: () => {
-                        const { school } = this.props.ui
-                        return school? school.name: ''
-                    },
-                    content: <SchoolList />
                 }
             default:
                 return {}
@@ -53,30 +46,25 @@ class ProductAccordion extends Component {
 
     handleTitleClick = (e,itemProps) => {
         const { index } = itemProps
-        const { setAccordion, ui } = this.props
-        setAccordion(ui.accordionIndex === index? null: index)
+        console.log(itemProps)
+        const { purchase, setPurchaseAccordion } = this.props
+        setPurchaseAccordion(purchase.accordionIndex === index? null: index)
     }
 
-    componentDidMount = () => initData()
-
     render() {
-        const { accordionIndex, inited, scanning, editing } = this.props.ui
-        const show = inited && !scanning && editing
+        const { accordionIndex } = this.props.purchase
         const panels = this.getAccordionPanels(accordionIndex)
 
-        return show
-            ? <Accordion
-                activeIndex={accordionIndex}
-                panels={panels}
-                onTitleClick={this.handleTitleClick} />
-            : null
+        return <Accordion
+            activeIndex={accordionIndex}
+            panels={panels}
+            onTitleClick={this.handleTitleClick} />
     }
 }
 
 export default connect(
-    ({ ui }) => ({ ui }),
+    ({ purchase }) => ({ purchase }),
     dispatch => ({
-        setAccordion: (index) => dispatch(setAccordion(index)),
-        initData: () => dispatch(initData()),
+        setPurchaseAccordion: (index) => dispatch(setPurchaseAccordion(index))
     })
-)(ProductAccordion)
+)(PurchaseAccordion)

@@ -16,10 +16,12 @@ class CartDisplay extends Component {
         return <Container style={{
             visibility: !ui.scanning && !ui.editing? 'visible': 'hidden'
         }}>
-            <Button onClick={() => editPurchase()}>buy somthing</Button>
+            <Button onClick={() => editPurchase(null)}>buy somthing</Button>
             <List>
             {
-                cart.list.map( ({ product, count }) => <List.Item>
+                cart.list.map( ({ product, count, key }, i) => <List.Item
+                    key={key}
+                    onClick={() => editPurchase(i)}>
                     {`${product.name} ${count}個 共${product.price*count}元`}
                 </List.Item>)
             }
@@ -31,6 +33,6 @@ class CartDisplay extends Component {
 export default connect(
     ({ ui, cart }) => ({ ui, cart }),
     dispatch => ({
-        editPurchase: () => dispatch(editPurchase())
+        editPurchase: (index) => dispatch(editPurchase(index))
     })
 )(CartDisplay)

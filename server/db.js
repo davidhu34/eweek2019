@@ -36,7 +36,8 @@ module.exports = ( uri ) => {
         getProducts: () => {
             return productDB.list({include_docs: true}).then(setListData('products'))
         },
-        purchase: (data) => purchaseDB.insert(data).then(result => result)
+        purchase: (data) => purchaseDB.insert(data).then(result => result),
+        purchaseBulk: (list) => purchaseDB.insert({ docs: list }).then(result => result),
     }
 
     return db

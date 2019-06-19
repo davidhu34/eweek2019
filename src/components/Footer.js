@@ -3,41 +3,45 @@ import { connect } from 'react-redux'
 import { Sidebar, Menu, Container, Grid, Button } from 'semantic-ui-react'
 
 import { footerDispatchers } from '../actions'
+import { MAIN, QRSCAN, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
 
 class Footer extends Component {
 
     componentDidMount() {
         console.log(this.props)
     }
-    
-    getButtons = ui => {
-        if (ui.scanning) {
-            return [{
-                text: 'BACK',
-                onClick: () => {}
-            }]
-        } else if (ui.editing) {
-            return [{
-                text: 'CANCEL',
-                onClick: () => this.props.cartCancel()
-            },{
-                text: 'ADD',
-                onClick: () => this.props.cartPut()
-            }]
-        } else {
-            return [{
-                text: 'CLEAR ALL',
-                onClick: () => this.props.cartClear()
-            },{
-                text: 'BUY ALL',
-                onClick: () => this.props.cartSubmit()
-            }]
+
+    getButtons = page => {
+        switch (page) {
+            case QRSCAN:
+                return [{
+                    text: 'BACK',
+                    onClick: () => {}
+                }]
+            case EDITPURCHASE:
+                return [{
+                    text: 'CANCEL',
+                    onClick: () => this.props.cartCancel()
+                },{
+                    text: 'ADD',
+                    onClick: () => this.props.cartPut()
+                }]
+            case MAIN:
+                return [{
+                    text: 'CLEAR ALL',
+                    onClick: () => this.props.cartClear()
+                },{
+                    text: 'BUY ALL',
+                    onClick: () => this.props.cartSubmit()
+                }]
+            default:
+                return []
         }
     }
 
     render() {
         const { ui } = this.props
-        const buttons = this.getButtons(ui)
+        const buttons = this.getButtons(ui.page)
 
         return <Sidebar visible={Boolean(ui.inited)} direction='bottom'>
             <Grid padded>
