@@ -4,7 +4,7 @@ import logger from 'redux-logger'
 
 import reducer from './reducers'
 
-const freshStore = (history) => {
+const freshStore = () => {
     const middlewares = []
     middlewares.push( logger )
     middlewares.push( thunk )

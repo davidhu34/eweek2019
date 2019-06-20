@@ -26,4 +26,7 @@ module.exports = {
     }),
     new webpack.NamedModulesPlugin()
   ],
+  node: {
+      fs: 'empty'
+  }
 }

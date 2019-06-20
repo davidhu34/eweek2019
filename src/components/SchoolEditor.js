@@ -19,7 +19,7 @@ const SchoolEditor = ({ ui, school, chooseSchool }) => {
             <Button onClick={() => chooseSchool()}>
                 {activeSchool? activeSchool.name: 'choose school'}
             </Button>
-            <Divider segment hidden></Divider>
+            <Divider section hidden></Divider>
         </Container>
         : page === EDITSCHOOL
             ? <SchoolList />
