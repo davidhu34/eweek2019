@@ -10,8 +10,8 @@ class SchoolList extends Component {
     handleScan = (data) => {
         if (!data) return
 
-        const strs = data.split('/')
-        const alias = strs[strs.length-1]
+
+        const alias = data.substr(data.indexOf('?team=')+6)
         const { school, selectSchool } = this.props
 
         for (let i = 0; i < school.list.length; i++) {

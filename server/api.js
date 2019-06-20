@@ -1,6 +1,17 @@
+
+const path = require('path')
 module.exports = (app, db) => {
-    app.get('/', function(req, res) {
+    app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname + '/index.html'));
+    });
+
+    app.get('/teampage', (req, res) => {
+        res.sendFile(path.join(__dirname + '/index-team.html'));
+    });
+
+    app.get('/team/:team', (req, res) => {
+        const team = req.params.team
+        res.send(team+team+team);
     });
 
     app.get('*/schools', function (req, res, next) {
