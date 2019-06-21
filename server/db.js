@@ -23,6 +23,9 @@ module.exports = ( uri ) => {
     const productDB = cloudant.db.use('product')
     const purchaseDB = cloudant.db.use('history')
 
+    purchaseDB.fetch({school: 'D'})
+        .then( body => body.rows.map( purchase => purchase.doc ))
+
     let schools = []
     let products = []
 
@@ -38,6 +41,8 @@ module.exports = ( uri ) => {
         },
         purchase: (data) => purchaseDB.insert(data).then(result => result),
         purchaseBulk: (list) => purchaseDB.bulk({ docs: list }).then(result => result),
+        schoolPurchases: (alias) => purchaseDB.fetch({school: alias})
+            .then( body => body.rows.map( purchase => purchase.doc ))
     }
 
     return db

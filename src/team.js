@@ -12,8 +12,8 @@ class Team extends Component {
 
     getTeamData = (e) => axios.get(`${API_ROOT}/team/${this.state.team}`)
         .then( res => {
-            const data = res.data
-            this.setState({ data })
+            const purchases = res.data.purchases || []
+            this.setState({ purchases })
         })
         .catch(err => console.log(err))
 
@@ -25,7 +25,7 @@ class Team extends Component {
         this.state = {
             team: alias,
             total: null,
-            data: null
+            purchases: []
         }
     }
 
@@ -36,7 +36,8 @@ class Team extends Component {
     render() {
         return <Container>
             <p>{'隊伍:' + this.state.team}</p>
-            { '$ ' + (this.state.data || 'no team data')}
+
+            { this.state.purchases.map(p => <p>{ p.product + p.count}</p>) }
             <p onClick={this.getTeamData}>REFRESH</p>
         </Container>
     }

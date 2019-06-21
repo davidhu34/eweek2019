@@ -1,6 +1,8 @@
 
 const path = require('path')
+
 module.exports = (app, db) => {
+
     app.get('/', (req, res) => {
         res.sendFile(path.join(__dirname + '/index.html'));
     });
@@ -11,7 +13,9 @@ module.exports = (app, db) => {
 
     app.get('/team/:team', (req, res) => {
         const team = req.params.team
-        res.send(team+team+team);
+        db.schoolPurchases(team).then( purchases => {
+            res.send({ purchases });
+        })
     });
 
     app.get('*/schools', function (req, res, next) {
@@ -25,8 +29,8 @@ module.exports = (app, db) => {
         db.getSchools()
     ]).then( res => {
         console.log('refreshDB')
-        console.log('schools:',res[1])
-        console.log('products:',res[0])
+        // console.log('schools:',res[1])
+        // console.log('products:',res[0])
         return res
     })
     app.get('*/refresh', function (req, res, next) {
