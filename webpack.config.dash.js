@@ -5,10 +5,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   mode: 'development',
-  entry: ['./src/index-team'],
+  entry: ['./src/index-dashboard'],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle-team.js'
+    filename: 'bundle-dash.js'
   },
   module: {
     rules: [

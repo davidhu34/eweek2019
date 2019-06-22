@@ -5,7 +5,7 @@ var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 module.exports = {
   devtool: 'eval',
   entry: [
-    './src/team'
+    './src/index-team'
   ],
   output: {
     path: path.join(__dirname, 'server'),

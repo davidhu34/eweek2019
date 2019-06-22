@@ -48,8 +48,8 @@ module.exports = ( uri ) => {
         },
         getSchoolList: () => Object.keys(schools).map(id => schools[id]),
         getProductList: () => Object.keys(products).map(id => products[id]),
-        purchase: (data) => purchaseDB.insert(data).then(result => result),
-        purchaseBulk: (list) => purchaseDB.bulk({ docs: list }).then(result => result),
+        purchase: (data) => purchaseDB.insert(data).then(res => res),
+        purchaseBulk: (list) => purchaseDB.bulk({ docs: list }).then(res => res),
         schoolPurchases: (school) => purchaseDB.fetch({ _id:school })
             .then( body => body.rows.map( purchase => purchase.doc ))
     }

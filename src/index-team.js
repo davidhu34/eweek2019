@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import { Provider } from 'react-redux'
 import { Container, Loader } from 'semantic-ui-react'
-import { hot } from 'react-hot-loader'
 import axios from 'axios'
 
 
@@ -48,7 +46,7 @@ class Team extends Component {
             <p>{`隊伍: ${team? team.name: '-'} 共花費${total || '-'}元`}</p>
 
             { purchases.map(p => <p>{ p.product + p.count}</p>) }
-            <Loader active inline='centered' />
+
             { fetching
                 ? <Loader active inline='centered' />
                 : <p onClick={this.getTeamData}>REFRESH</p>

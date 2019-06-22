@@ -6,8 +6,6 @@ const express = require('express')
 // const fs = require('fs')
 // const axios = require('axios')
 // const FormData = require('form-data')
-// const socketio = require('socket.io')
-
 
 const { PORT, CLOUDANT_URL } = require('./configs')
 const { normalizePort, onError, onListening } = require('./util')
@@ -29,6 +27,8 @@ const server = http.createServer( app )
 console.log('server started on port',port)
 
 const api = require('./api')(app,db)
+
+const io = require('./socketio')(server, db)
 
 server.listen( port )
 server.on( 'error', onError( port ) )

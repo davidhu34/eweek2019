@@ -7,6 +7,8 @@
   "scripts": {
     "start": "node server",
     "dev": "webpack-dev-server --hot",
+    "dev-dash": "webpack-dev-server --config webpack.config.dash.js --hot",
+    "dev-team": "webpack-dev-server --config webpack.config.team.js --hot",
     "build": "webpack -p --config webpack.config.prod.js",
     "build-team": "webpack -p --config webpack.config.team.prod.js",
     "cf-push": "npm run build && npm run build-team && cd server && ibmcloud cf push && cd .."
@@ -28,6 +30,7 @@
     "axios": "^0.18.0",
     "history": "^4.7.2",
     "react": "^16.2.0",
+    "react-d3-cloud": "^0.7.0",
     "react-dom": "^16.2.0",
     "react-hot-loader": "^4.3.3",
     "react-qr-reader": "^2.2.1",
