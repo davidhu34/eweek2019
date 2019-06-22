@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { Container } from 'semantic-ui-react'
+import { Container, Loader } from 'semantic-ui-react'
 import { hot } from 'react-hot-loader'
 import axios from 'axios'
 
@@ -10,22 +10,30 @@ import { API_ROOT } from './configs'
 
 class Team extends Component {
 
-    getTeamData = (e) => axios.get(`${API_ROOT}/team/${this.state.team}`)
+    getTeamData = (e) => {
+        this.setState({ fetching: true })
+        return axios.get(`${API_ROOT}/team/${this.state.teamId}`)
         .then( res => {
-            const purchases = res.data.purchases || []
-            this.setState({ purchases })
+            const { purchases, team, total } = res.data
+            console.log(res.data)
+            this.setState({
+                purchases, team, total,
+                fetching: false
+            })
         })
         .catch(err => console.log(err))
+    }
 
     constructor(props) {
         super(props)
 
         const link = window.location.href
-        const alias = link.substr(link.indexOf('?team=')+6)
         this.state = {
-            team: alias,
+            teamId: link.substr(link.indexOf('?team=')+6),
+            team: null,
             total: null,
-            purchases: []
+            purchases: [],
+            fetching: true
         }
     }
 
@@ -34,11 +42,17 @@ class Team extends Component {
     }
 
     render() {
+        const { team, purchases, total, fetching } = this.state
+        console.log(this.state)
         return <Container>
-            <p>{'隊伍:' + this.state.team}</p>
+            <p>{`隊伍: ${team? team.name: '-'} 共花費${total || '-'}元`}</p>
 
-            { this.state.purchases.map(p => <p>{ p.product + p.count}</p>) }
-            <p onClick={this.getTeamData}>REFRESH</p>
+            { purchases.map(p => <p>{ p.product + p.count}</p>) }
+            <Loader active inline='centered' />
+            { fetching
+                ? <Loader active inline='centered' />
+                : <p onClick={this.getTeamData}>REFRESH</p>
+            }
         </Container>
     }
 }

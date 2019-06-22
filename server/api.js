@@ -12,9 +12,20 @@ module.exports = (app, db) => {
     });
 
     app.get('/team/:team', (req, res) => {
-        const team = req.params.team
-        db.schoolPurchases(team).then( purchases => {
-            res.send({ purchases });
+        const team = db.schools[req.params.team]
+        db.schoolPurchases(team).then( list => {
+            let total = 0
+            const purchases = list.map( p => {
+                const product = db.products[p.product]
+                const productTotal = p.count * product.price
+                total += productTotal
+                return {
+                    product: product.name,
+                    count: p.count,
+                    total: productTotal
+                }
+            })
+            res.send({ purchases, total, team });
         })
     });
 
@@ -25,8 +36,8 @@ module.exports = (app, db) => {
     });
 
     const refreshDB = () => Promise.all([
-        db.getProducts(),
-        db.getSchools()
+        db.fetchSchoolList(),
+        db.fetchProductList()
     ]).then( res => {
         console.log('refreshDB')
         // console.log('schools:',res[1])
@@ -41,8 +52,10 @@ module.exports = (app, db) => {
     });
 
     app.get('*/init', (req, res, next) => {
-        console.log({ schools: db.schools, products: db.products })
-        res.send({ schools: db.schools, products: db.products })
+        const schoolList = db.getSchoolList()
+        const productList = db.getProductList()
+        console.log({ schools: schoolList, products: productList })
+        res.send({ schools: schoolList, products: productList })
     });
 
     app.post('*/buy', (req, res, next) => {

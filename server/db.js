@@ -1,6 +1,13 @@
 const Cloudant = require('@cloudant/cloudant');
 module.exports = ( uri ) => {
 
+    let dataMap = {
+        'product': {},
+        'schools': {}
+    }
+    let schools = {}
+    let products = {}
+    
     const cloudant = Cloudant(uri)
 
     cloudant.set_cors({
@@ -13,35 +20,37 @@ module.exports = ( uri ) => {
         // failure - error information is in 'err'.
     });
 
-    const setListData = (attr) => (body) => {
-        const results = body.rows.map(data => data.doc)
-        db[attr] = results
-        return results
-    }
-
     const schoolDB = cloudant.db.use('school')
     const productDB = cloudant.db.use('product')
     const purchaseDB = cloudant.db.use('history')
 
+    const setListData = (attr) => (body) => body.rows.map(data => {
+        const doc = data.doc
+        db[attr][doc._id] = doc
+        return doc._id
+    })
+
+
     purchaseDB.fetch({school: 'D'})
         .then( body => body.rows.map( purchase => purchase.doc ))
 
-    let schools = []
-    let products = []
+    
 
     const db = {
         cloudant: cloudant,
         schools: schools,
         products: products,
-        getSchools: () => {
+        fetchSchoolList: () => {
             return schoolDB.list({include_docs: true}).then(setListData('schools'))
         },
-        getProducts: () => {
+        fetchProductList: () => {
             return productDB.list({include_docs: true}).then(setListData('products'))
         },
+        getSchoolList: () => Object.keys(schools).map(id => schools[id]),
+        getProductList: () => Object.keys(products).map(id => products[id]),
         purchase: (data) => purchaseDB.insert(data).then(result => result),
         purchaseBulk: (list) => purchaseDB.bulk({ docs: list }).then(result => result),
-        schoolPurchases: (alias) => purchaseDB.fetch({school: alias})
+        schoolPurchases: (school) => purchaseDB.fetch({ _id:school })
             .then( body => body.rows.map( purchase => purchase.doc ))
     }
 

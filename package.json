@@ -9,7 +9,7 @@
     "dev": "webpack-dev-server --hot",
     "build": "webpack -p --config webpack.config.prod.js",
     "build-team": "webpack -p --config webpack.config.team.prod.js",
-    "cf-push": "npm run build && cd server && ibmcloud cf push && cd .."
+    "cf-push": "npm run build && npm run build-team && cd server && ibmcloud cf push && cd .."
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

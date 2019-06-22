@@ -11,11 +11,11 @@ class SchoolList extends Component {
         if (!data) return
 
 
-        const alias = data.substr(data.indexOf('?team=')+6)
+        const id = data.substr(data.indexOf('?team=')+6)
         const { school, selectSchool } = this.props
 
         for (let i = 0; i < school.list.length; i++) {
-            if (school.list[i].alias === alias) {
+            if (school.list[i]._id === id) {
                 selectSchool(i)
                 break
             }

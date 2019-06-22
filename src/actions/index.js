@@ -107,10 +107,10 @@ const cartSubmit = () => (dispatch, getState) => {
     dispatch({ type: 'CART_SUBMIT_START' })
 
     axios.post(API_ROOT+'/buyall', {
-        school: activeSchool.alias,
+        school: activeSchool._id,
         purchases: cart.list.map( p => ({
             count: p.count,
-            product: p.product.alias
+            product: p.product._id
         }))
     }).then( res => {
         console.log(res);
