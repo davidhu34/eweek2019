@@ -85,5 +85,9 @@ module.exports = (app, db, io) => {
         refreshTeamBalance(team).then( result => res.send(result))
     })
 
+    app.get('/dashboard', (req, res) => {
+        res.sendFile(path.join(__dirname + '/index-dash.html'));
+    });
+
     return { refreshDB }
 }

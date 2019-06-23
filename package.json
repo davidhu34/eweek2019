@@ -11,7 +11,8 @@
     "dev-team": "webpack-dev-server --config webpack.config.team.js --hot",
     "build": "webpack -p --config webpack.config.prod.js",
     "build-team": "webpack -p --config webpack.config.team.prod.js",
-    "cf-push": "npm run build && npm run build-team && cd server && ibmcloud cf push && cd .."
+    "build-dash": "webpack -p --config webpack.config.dash.prod.js",
+    "cf-push": "npm run build && npm run build-team && npm run build-dash && cd server && ibmcloud cf push && cd .."
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
