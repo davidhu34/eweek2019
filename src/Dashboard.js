@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Container, Loader } from 'semantic-ui-react'
 import { hot } from 'react-hot-loader'
 import WordCloud from "react-d3-cloud";
+import io from 'socket.io-client'
 import axios from 'axios'
 
 const fontSizeMapper = word => Math.log2(word.value) * 5;
@@ -14,34 +15,44 @@ class Dashboard extends Component {
 
     constructor(props) {
         super(props)
+        this.socket = null
         this.ref = React.createRef();
         this.state = {
-            data: [
-                { text: "Hey", value: 1000 },
-                { text: "lol", value: 200 },
-                { text: "first impression", value: 800 },
-                { text: "very cool", value: 1000000 },
-                { text: "duck", value: 10 }
-            ],
+            schools: [],
+            data: [],
             canDraw: false
         }
     }
 
+    balanceData = (schools, balance) => schools.map( (s,i) => {
+        const value = balance[s._id] || 0// (i+1)*100
+        return {
+            text: `${s.name} : ${value.toString()} 元`,
+            value: value+1
+        }
+    })
+
     componentDidMount() {
         this.setState({ canDraw: true })
-        console.log(this.ref)
-        axios.get(API_ROOT+'/init')
-            .then(res => {
-                const { schools, products } = res.data
-                console.log(schools)
+
+        const socket = io(API_ROOT)
+        socket.on('connect', () => {
+            console.log('connected')
+        })
+        socket.on('teamtotal', (data) => {
+            this.setState({ data: this.balanceData(this.state.schools, data) })
+        })
+
+        axios.get(API_ROOT+'/init-dashboard')
+            .then( res => {
+                const { schools, balance } = res.data
                 this.setState({
-                    data: schools.map( (s,i) => ({
-                        text: s.name+':'+((i+1)*100).toString()+'元',
-                        value: (i+1)*100
-                    }))
+                    schools,
+                    data: this.balanceData(schools, balance)
                 })
             })
             .catch(err => {
+                console.log(err)
             })
     }
 

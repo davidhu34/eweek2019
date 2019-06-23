@@ -7,7 +7,8 @@ module.exports = ( uri ) => {
     }
     let schools = {}
     let products = {}
-    
+    let balance = {}
+
     const cloudant = Cloudant(uri)
 
     cloudant.set_cors({
@@ -34,24 +35,27 @@ module.exports = ( uri ) => {
     purchaseDB.fetch({school: 'D'})
         .then( body => body.rows.map( purchase => purchase.doc ))
 
-    
+
 
     const db = {
         cloudant: cloudant,
         schools: schools,
         products: products,
+        balance: balance,
         fetchSchoolList: () => {
             return schoolDB.list({include_docs: true}).then(setListData('schools'))
         },
         fetchProductList: () => {
             return productDB.list({include_docs: true}).then(setListData('products'))
         },
+        fetchPurchases: () => purchaseDB.list({include_docs: true})
+            .then((body) => body.rows.map(data => data.doc)),
+        fetchSchoolPurchases: (school) => purchaseDB.fetch({ _id:school })
+            .then( body => body.rows.map( purchase => purchase.doc )),
         getSchoolList: () => Object.keys(schools).map(id => schools[id]),
         getProductList: () => Object.keys(products).map(id => products[id]),
         purchase: (data) => purchaseDB.insert(data).then(res => res),
-        purchaseBulk: (list) => purchaseDB.bulk({ docs: list }).then(res => res),
-        schoolPurchases: (school) => purchaseDB.fetch({ _id:school })
-            .then( body => body.rows.map( purchase => purchase.doc ))
+        purchaseBulk: (list) => purchaseDB.bulk({ docs: list }).then(res => res)
     }
 
     return db

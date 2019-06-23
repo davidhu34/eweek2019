@@ -2,6 +2,7 @@ src/configs/index.js
 server/configs.js
 server/bundle.js
 server/bundle-team.js
+server/package-lock.json
 dist/
 # Logs
 logs
