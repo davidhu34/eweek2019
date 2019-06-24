@@ -35,7 +35,8 @@ module.exports = (app, db, io) => {
             const productTotal = p.count * product.price
             total += productTotal
             return {
-                product: product.name,
+                key: p._id,
+                product: product,
                 count: p.count,
                 total: productTotal
             }
@@ -76,13 +77,24 @@ module.exports = (app, db, io) => {
         });
     });
 
+    app.get('/teamhistory', (req, res) => {
+        const team = db.schools[req.params.team]
+        refreshTeamBalance(team).then( result => res.send(result))
+    })
+
     app.get('/teampage', (req, res) => {
         res.sendFile(path.join(__dirname + '/index-team.html'));
     });
 
     app.get('/team/:team', (req, res) => {
         const team = db.schools[req.params.team]
-        refreshTeamBalance(team).then( result => res.send(result))
+        refreshTeamBalance(team).then( result => res.send({
+            ...result,
+            purchases: result.purchases.map(p => ({
+                ...p,
+                product: p.product.name
+            }))
+        }))
     })
 
     app.get('/dashboard', (req, res) => {

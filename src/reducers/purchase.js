@@ -1,4 +1,4 @@
-import { MAIN, QRSCAN, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
+import { MAIN, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
 
 const purchaseInit = {
     accordionIndex: null,

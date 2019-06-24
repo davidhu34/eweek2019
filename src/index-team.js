@@ -45,7 +45,7 @@ class Team extends Component {
         return <Container>
             <p>{`隊伍: ${team? team.name: '-'} 共花費${total || '-'}元`}</p>
 
-            { purchases.map(p => <p>{ p.product + p.count}</p>) }
+            { purchases.map(p => <p key={p.key}>{ p.product + p.count}</p>) }
 
             { fetching
                 ? <Loader active inline='centered' />

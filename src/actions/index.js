@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 import { API_ROOT } from '../configs'
-import { MAIN, QRSCAN, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
+import { MAIN, EDITPURCHASE, EDITSCHOOL, HISTORY } from '../consts/pages'
 
 export const initData = () => (dispatch, getState) => {
     if (isNaN(getState().ui.inited)) {
@@ -30,6 +30,42 @@ export const changePage = (page) => ({
     page: page
 })
 
+const backToMain = () => changePage(MAIN)
+
+export const showHistory = (team) => (dispatch, getState) => {
+
+    const { ui, school, history } = getState()
+
+    if (ui.submitting) return
+    else dispatch(changePage(HISTORY))
+
+    const { list, activeIndex } = school
+
+    const activeSchool = list[activeIndex]
+    const team = activeSchool._id
+    const historySchool = history.team
+
+    dispatch({ type: 'HISTORY_GET_START' })
+
+    axios.get(API_ROOT+'/teamhistory', { team })
+        .then( res => {
+            const { purchases, total } = res.data
+            dispatch({
+                type: 'HISTORY_GET_END',
+                team: team,
+                histories: purchases,
+                total: total,
+                success: true,
+            })
+        })
+        .catch(err => {
+            dispatch({
+                type: 'HISTORY_GET_END',
+                error: err,
+                success: false
+            })
+        })
+}
 export const selectProd = (index) => (dispatch, getState) => {
     dispatch({
         type: 'PRODUCT_SELECT',
@@ -92,14 +128,16 @@ const cartPut = (param) => (dispatch, getState) => {
         product,
         count
     })
-    dispatch(changePage(MAIN))
+    dispatch(backToMain())
 }
 
-const cartCancel = (param) => changePage(MAIN)
+const cartCancel = (param) => backToMain()
 
 const cartSubmit = () => (dispatch, getState) => {
 
     const { ui, cart, school } = getState()
+    if (ui.submitting) return
+
     const { list, activeIndex } = school
 
     const activeSchool = list[activeIndex]
@@ -137,6 +175,7 @@ export const footerDispatchers = dispatch => {
     const actionMap = {
         schoolPut,
         schoolCancel,
+        backToMain,
         cartPut,
         cartCancel,
         cartSubmit,

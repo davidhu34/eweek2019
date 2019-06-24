@@ -3,21 +3,12 @@ import { connect } from 'react-redux'
 import { Sidebar, Container, Grid, Button } from 'semantic-ui-react'
 
 import { footerDispatchers } from '../actions'
-import { MAIN, QRSCAN, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
+import { MAIN, HISTORY, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
 
 class Footer extends Component {
 
-    componentDidMount() {
-        console.log(this.props)
-    }
-
     getButtons = page => {
         switch (page) {
-            case QRSCAN:
-                return [{
-                    text: 'BACK',
-                    onClick: () => {}
-                }]
             case EDITPURCHASE:
                 return [{
                     text: 'CANCEL',
@@ -30,6 +21,11 @@ class Footer extends Component {
                 return [{
                     text: 'CANCEL',
                     onClick: () => this.props.schoolCancel()
+                }]
+            case HISTORY:
+                return [{
+                    text: 'BACK',
+                    onClick: () => this.props.backToMain()
                 }]
             case MAIN:
                 return [{
@@ -50,7 +46,7 @@ class Footer extends Component {
 
         return <Sidebar visible={Boolean(ui.inited)} direction='bottom'>
             <Grid padded>
-            <Grid.Row columns={buttons.length}>
+            <Grid.Row columns={buttons.length || 1}>
                 {
                     buttons.map( b => <Grid.Column key={b.text} textAlign='center'>
                         <Button onClick={b.onClick}>{b.text}</Button>

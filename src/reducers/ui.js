@@ -1,5 +1,4 @@
-import { MAIN, QRSCAN, EDITPURCHASE, EDITSCHOOL } from '../consts/pages'
-
+import { MAIN } from '../consts/pages'
 const uiInit = {
     inited: null,
     submitting: false,
@@ -13,21 +12,18 @@ export const ui = ( state = uiInit, action ) => {
                 ...state,
                 inited: false
             }
-        case 'UI_EDIT_PURCHASE':
-            return {
-                ...state,
-                page: EDITPURCHASE
-            }
         case 'UI_CHANGE_PAGE':
             return {
                 ...state,
                 page: action.page
             }
+        case 'HISTORY_GET_START':
         case 'CART_SUBMIT_START':
             return {
                 ...state,
                 submitting: true
             }
+        case 'HISTORY_GET_END':
         case 'CART_SUBMIT_END':
             return {
                 ...state,

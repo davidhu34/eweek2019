@@ -1,34 +1,47 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Button, Container, Divider } from 'semantic-ui-react'
+import { Container, Header, Button, Divider } from 'semantic-ui-react'
 
-import { MAIN, QRSCAN, EDITSCHOOL } from '../consts/pages'
+import { MAIN, HISTORY, EDITSCHOOL } from '../consts/pages'
 
-import { chooseSchool, changePage } from '../actions'
+import { chooseSchool, changePage, showHistory } from '../actions'
 
 import SchoolList from './SchoolList'
+import HistoryDisplay from './HistoryDisplay'
 
-const SchoolEditor = ({ ui, school, chooseSchool }) => {
+const SchoolEditor = ({ ui, school, chooseSchool, showHistory }) => {
 
     const { page, inited } = ui
     const { list, activeIndex } = school
 
     const activeSchool = list[activeIndex]
-    return page === MAIN && inited
+    const editor = inited && page === MAIN
         ? <Container textAlign='center'>
+            { activeSchool
+                ? <Button onClick={() => showHistory(activeSchool._id)}>
+                    show history
+                </Button>
+                : null
+            }
             <Button onClick={() => chooseSchool()}>
-                {activeSchool? activeSchool.name: 'choose school'}
+                choose school
             </Button>
             <Divider section hidden></Divider>
         </Container>
-        : page === EDITSCHOOL
-            ? <SchoolList />
-            : null
+        : page === EDITSCHOOL? <SchoolList />
+        : page === HISTORY? <HistoryDisplay />
+        : null
+
+    return <Container>
+        <Header>{activeSchool? activeSchool.name: ''}</Header>
+        {editor}
+    </Container>
 }
 
 export default connect(
     ({ ui, school }) => ({ ui, school }),
     dispatch => ({
         chooseSchool: () => dispatch(changePage(EDITSCHOOL)),
+        showHistory: (school) => dispatch(showHistory(school))
     })
 )(SchoolEditor)
