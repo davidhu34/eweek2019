@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { Container, Header, Button, Divider } from 'semantic-ui-react'
 
@@ -16,7 +16,7 @@ const SchoolEditor = ({ ui, school, chooseSchool, showHistory }) => {
 
     const activeSchool = list[activeIndex]
     const editor = inited && page === MAIN
-        ? <Container textAlign='center'>
+        ? <Fragment>
             { activeSchool
                 ? <Button onClick={() => showHistory(activeSchool._id)}>
                     show history
@@ -26,13 +26,13 @@ const SchoolEditor = ({ ui, school, chooseSchool, showHistory }) => {
             <Button onClick={() => chooseSchool()}>
                 choose school
             </Button>
-            <Divider section hidden></Divider>
-        </Container>
+            <Divider hidden />
+        </Fragment>
         : page === EDITSCHOOL? <SchoolList />
         : page === HISTORY? <HistoryDisplay />
         : null
 
-    return <Container>
+    return <Container textAlign='center'>
         <Header>{activeSchool? activeSchool.name: ''}</Header>
         {editor}
     </Container>

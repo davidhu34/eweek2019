@@ -1,15 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Container, Header, Button, List } from 'semantic-ui-react'
-
-import { showHistory } from '../actions'
+import { Container, Header, List } from 'semantic-ui-react'
 
 const HistoryDisplay = ({ ui, history }) => {
-    const { list } = history
+    const { list, total } = history
     return <Container textAlign='center' style={{
         visibility: ui.page === 'HISTORY'? 'visible': 'hidden'
     }}>
-        <Header>History:</Header>
+        <Header>{`總共花費: ${total}元`}</Header>
         <List>
         {
             list.map( (history, i) => {

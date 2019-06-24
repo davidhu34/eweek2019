@@ -11,7 +11,7 @@ module.exports = (app, db, io) => {
         db.fetchSchoolList(),
         db.fetchProductList()
     ]).then( res => {
-        console.log('refreshDB', res)
+        console.log('schools and products fetched')
         let balance = {}
         const [products,schools] = res
         db.getSchoolList().forEach( s => {
@@ -24,11 +24,13 @@ module.exports = (app, db, io) => {
                 balance[p.school] += productTotal
             })
             db.balance = balance
+
+            console.log('refreshed balance', balance)
         })
         return { products, schools }
     })
 
-    const refreshTeamBalance = (team) => db.fetchSchoolPurchases(team).then( list => {
+    const refreshTeamBalance = (team) => db.fetchSchoolPurchases(team._id).then( list => {
         let total = 0
         const purchases = list.map( p => {
             const product = db.products[p.product]
@@ -41,7 +43,7 @@ module.exports = (app, db, io) => {
                 total: productTotal
             }
         })
-        db.balance[team] = total
+        db.balance[team._id] = total
         io.emit('teamtotal',db.balance)
         return { purchases, total, team }
     })
@@ -77,7 +79,7 @@ module.exports = (app, db, io) => {
         });
     });
 
-    app.get('/teamhistory', (req, res) => {
+    app.get('/teamhistory/:team', (req, res) => {
         const team = db.schools[req.params.team]
         refreshTeamBalance(team).then( result => res.send(result))
     })

@@ -50,8 +50,9 @@ module.exports = ( uri ) => {
         },
         fetchPurchases: () => purchaseDB.list({include_docs: true})
             .then((body) => body.rows.map(data => data.doc)),
-        fetchSchoolPurchases: (school) => purchaseDB.fetch({ _id:school })
-            .then( body => body.rows.map( purchase => purchase.doc )),
+        fetchSchoolPurchases: (school) => purchaseDB.find({
+            selector: { school }
+        }).then( body => body.docs ),
         getSchoolList: () => Object.keys(schools).map(id => schools[id]),
         getProductList: () => Object.keys(products).map(id => products[id]),
         purchase: (data) => purchaseDB.insert(data).then(res => res),

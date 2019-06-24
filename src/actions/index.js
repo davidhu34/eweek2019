@@ -47,7 +47,7 @@ export const showHistory = (team) => (dispatch, getState) => {
 
     dispatch({ type: 'HISTORY_GET_START' })
 
-    axios.get(API_ROOT+'/teamhistory', { team })
+    axios.get(`${API_ROOT}\/teamhistory\/${team}`)
         .then( res => {
             const { purchases, total } = res.data
             dispatch({
@@ -61,6 +61,7 @@ export const showHistory = (team) => (dispatch, getState) => {
         .catch(err => {
             dispatch({
                 type: 'HISTORY_GET_END',
+                team: team,
                 error: err,
                 success: false
             })
