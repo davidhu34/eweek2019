@@ -25,6 +25,20 @@ export const initData = () => (dispatch, getState) => {
         })
 }
 
+export const showModal = (params) => (dispatch, getState) => {
+    dispatch({
+        type: 'MODAL_SHOW',
+        ...params
+    })
+}
+
+export const closeModal = (index) => (dispatch, getState) => {
+    const { buttons } = getState().modal
+    const button = buttons[index]
+    if (button.act) dispatch(button.act)
+    dispatch({ type: 'MODAL_HIDE' })    
+}
+
 export const changePage = (page) => ({
     type: 'UI_CHANGE_PAGE',
     page: page
@@ -122,6 +136,24 @@ export const editPurchase = (index) => (dispatch, getState) => {
     }
 }
 
+
+export const deletePurchase = ({ index, purchase }) => showModal({
+    title: '確認移除',
+    icon: 'trash alternate outline',
+    content: `刪除項目: ${purchase.product.name} ${purchase.count}個 ？`,
+    buttons: [{
+        text: '取消',
+    },{
+        text: '刪除',
+        color: 'red',
+        icon: 'trash alternate outline',
+        act: {
+            type: 'PURCHASE_DELETE',
+            index
+        }
+    }]
+})
+
 const cartPut = (param) => (dispatch, getState) => {
     const { product, count } = getState().purchase
     dispatch({
@@ -134,7 +166,7 @@ const cartPut = (param) => (dispatch, getState) => {
 
 const cartCancel = (param) => backToMain()
 
-const cartSubmit = () => (dispatch, getState) => {
+const cartSubmitAct = (dispatch, getState) => {
 
     const { ui, cart, school } = getState()
     if (ui.submitting) return
@@ -166,6 +198,19 @@ const cartSubmit = () => (dispatch, getState) => {
         })
     })
 }
+
+const cartSubmit = (param) => showModal({
+    title: '確認送出',
+    content: '確定送出購物車內容？',
+    buttons: [{
+        text: '取消'
+    },{
+        text: '送出',
+        icon: 'check',
+        color: 'green',
+        act: cartSubmitAct
+    }]
+})
 
 const cartClear = (param) => ({
     type: 'CART_CLEAR'

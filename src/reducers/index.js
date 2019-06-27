@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 
 import { ui } from './ui'
+import { modal } from './modal'
 import { cart } from './cart'
 import { product } from './product'
 import { school } from './school'
@@ -13,6 +14,7 @@ const reducer = combineReducers({
     purchase,
     history,
     cart,
+    modal,
     ui
 })
 
