@@ -201,6 +201,7 @@ const cartSubmitAct = (dispatch, getState) => {
 
 const cartSubmit = (param) => showModal({
     title: '確認送出',
+    icon: 'cloud upload',
     content: '確定送出購物車內容？',
     buttons: [{
         text: '取消'

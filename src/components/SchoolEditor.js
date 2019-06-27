@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
-import { Container, Header, Button, Divider } from 'semantic-ui-react'
+import { Container, Header, Button, Icon, Divider } from 'semantic-ui-react'
 
 import { MAIN, HISTORY, EDITSCHOOL } from '../consts/pages'
 
@@ -18,23 +18,28 @@ const SchoolEditor = ({ ui, school, chooseSchool, showHistory }) => {
     const editor = inited && page === MAIN
         ? <Fragment>
             { activeSchool
-                ? <Button onClick={() => showHistory(activeSchool._id)}>
-                    show history
+                ? <Button basic
+                    size='large'
+                    onClick={() => showHistory(activeSchool._id)}>
+                    <Icon name='history' />購買紀錄
                 </Button>
                 : null
             }
-            <Button onClick={() => chooseSchool()}>
-                choose school
+            <Button basic
+                size='large'
+                onClick={() => chooseSchool()}>
+                <Icon name='qrcode'/>選擇學校
             </Button>
-            <Divider hidden />
         </Fragment>
         : page === EDITSCHOOL? <SchoolList />
         : page === HISTORY? <HistoryDisplay />
         : null
 
     return <Container textAlign='center'>
+        <Divider hidden />
         <Header>{activeSchool? activeSchool.name: ''}</Header>
         {editor}
+        <Divider hidden />
     </Container>
 }
 

@@ -34,6 +34,14 @@ export const cart = ( state = cartInit, action ) => {
                 ...state,
                 editing: action.index
             }
+        case 'PURCHASE_DELETE':
+            return {
+                ...state,
+                list: [
+                    ...state.list.slice(0,action.index),
+                    ...state.list.slice(action.index+1)
+                ]
+            }
         case 'CART_PUT':
             return {
                 ...state,

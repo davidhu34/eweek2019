@@ -11,28 +11,28 @@ class Footer extends Component {
         switch (page) {
             case EDITPURCHASE:
                 return [{
-                    text: 'CANCEL',
+                    text: '取消',
                     onClick: () => this.props.cartCancel()
                 },{
-                    text: 'SAVE',
+                    text: '加入',
                     onClick: () => this.props.cartPut()
                 }]
             case EDITSCHOOL:
                 return [{
-                    text: 'CANCEL',
+                    text: '返回',
                     onClick: () => this.props.schoolCancel()
                 }]
             case HISTORY:
                 return [{
-                    text: 'BACK',
+                    text: '返回',
                     onClick: () => this.props.backToMain()
                 }]
             case MAIN:
                 return [{
-                    text: 'CLEAR ALL',
+                    text: '清空購物車',
                     onClick: () => this.props.cartClear()
                 },{
-                    text: 'BUY ALL',
+                    text: '購買',
                     onClick: () => this.props.cartSubmit()
                 }]
             default:

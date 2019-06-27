@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Container, Loader } from 'semantic-ui-react'
 
 const Loading = ({ ui }) => <Container>
-    {ui.submitting? <Loader active inline='centered' />: null}
+    {ui.submitting? <Loader size='large' active inline='centered' />: null}
 </Container>
 
 export default connect(

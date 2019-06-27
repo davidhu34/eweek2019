@@ -13,8 +13,8 @@ export const modal = ( state = modalInit, action ) => {
                 ...state,
                 show: true,
                 title: action.title || '',
-                content: action.content || '',
                 icon: action.icon || '',
+                content: action.content || '',
                 buttons: action.buttons || [],
             }
         case 'MODAL_HIDE':

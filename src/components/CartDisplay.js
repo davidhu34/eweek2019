@@ -10,14 +10,18 @@ const CartDisplay = ({
 }) => <Container textAlign='center' style={{
     visibility: ui.page === 'MAIN'? 'visible': 'hidden'
 }}>
-    <Button onClick={() => editPurchase(null)}>buy somthing</Button>
+    <Button primary
+        size='large'
+        onClick={() => editPurchase(null)}>
+        <Icon name='cart plus' />新增項目
+    </Button>
     <List>
     {cart.list.map( (purchase, i) => {
         const { product, count, key } = purchase
         return <List.Item key={key}>
 
             <Button basic
-                color='violet'
+                color='blue'
                 onClick={() => editPurchase(i)}
                 content={`${product.name} ${count}個 共${product.price*count}元`}
             />
