@@ -76,14 +76,22 @@ module.exports = (app, db, io) => {
         const team = db.schools[school]
 
         let cartTotal = 0
+        let invalid = false
         const list = purchases.map( p => {
-            const count = p.count
             const product = db.products[p.product]
-            cartTotal += product.price*count
+            const prodTotal = product.price * p.count
+
+            if (prodTotal) cartTotal += prodTotal
+            else invalid = true
+
             return { ...p, school }
         })
-    
-        refreshTeamBalance(team).then( result => {
+
+        if (invalid) res.send({
+            success: false,
+            message: `資料有誤`
+        })
+        else refreshTeamBalance(team).then( result => {
 
             const bal = db.balance[school]
             if (cartTotal + bal > db.budget) {

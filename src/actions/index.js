@@ -25,12 +25,10 @@ export const initData = () => (dispatch, getState) => {
         })
 }
 
-export const showModal = (params) => (dispatch, getState) => {
-    dispatch({
-        type: 'MODAL_SHOW',
-        ...params
-    })
-}
+export const showModal = (params) => ({
+    type: 'MODAL_SHOW',
+    ...params
+})
 
 export const closeModal = (index) => (dispatch, getState) => {
     const { buttons } = getState().modal
@@ -99,18 +97,10 @@ export const selectSchool = (index) => (dispatch, getState) => {
         type: 'SCHOOL_SELECT',
         index: index
     })
-    dispatch(schoolCancel(null))
+    dispatch(changePage(MAIN))
 }
 
-const schoolPut = (school) => ({
-    type: 'UI_SCHOOL_SET',
-    school: school
-})
-
-const schoolCancel = (param) => ({
-    type: 'UI_SCHOOL_SET',
-    school: null
-})
+const schoolCancel = (param) => changePage(MAIN)
 
 export const setCount = (count) => ({
     type: 'PURCHASE_COUNT_SET',
@@ -136,9 +126,8 @@ export const editPurchase = (index) => (dispatch, getState) => {
     }
 }
 
-
 export const deletePurchase = ({ index, purchase }) => showModal({
-    title: '確認移除',
+    title: '移除購買項目',
     icon: 'trash alternate outline',
     content: `刪除項目: ${purchase.product.name} ${purchase.count}個 ？`,
     buttons: [{
@@ -154,14 +143,26 @@ export const deletePurchase = ({ index, purchase }) => showModal({
     }]
 })
 
+const cartPutFailure = () => showModal({
+    title: '無法加入購物車',
+    icon: 'dont',
+    content: '購買資訊不完整',
+    buttons: [{
+        text: '好吧'
+    }]
+})
+
 const cartPut = (param) => (dispatch, getState) => {
     const { product, count } = getState().purchase
-    dispatch({
-        type: 'CART_PUT',
-        product,
-        count
-    })
-    dispatch(backToMain())
+    
+    if (product) {
+        dispatch({
+            type: 'CART_PUT',
+            product,
+            count
+        })
+        dispatch(backToMain())
+    } else dispatch(cartPutFailure())
 }
 
 const cartCancel = (param) => backToMain()
@@ -209,7 +210,7 @@ const cartSubmitSuccess = (msg) => showModal({
 })
 
 const cartSubmitFailure = (error) => showModal({
-    title: '購買失敗',
+    title: '無法購買',
     icon: 'dont',
     content: error,
     buttons: [{
@@ -221,28 +222,59 @@ const cartSubmitFailure = (error) => showModal({
     }]
 })
 
-const cartSubmit = (param) => showModal({
-    title: '確認送出',
-    icon: 'cloud upload',
-    content: '確定送出購物車內容？',
-    buttons: [{
-        text: '取消'
-    },{
-        text: '送出',
-        icon: 'check',
-        color: 'green',
-        act: cartSubmitAct
-    }]
-})
+const cartSubmit = (param) => (dispatch,getState) => {
 
-const cartClear = (param) => ({
-    type: 'CART_CLEAR'
-})
+    const { cart, school } = getState()
+    const empty = cart.list.length === 0
+    const { list, activeIndex } = school
+    const activeSchool = list[activeIndex]
+
+    let errorMessages = []
+    if (!activeSchool) errorMessages.push('尚未選擇學校')
+    if (empty) errorMessages.push('購物車為空')
+
+    const act = errorMessages.length
+        ? cartSubmitFailure(errorMessages.join(', '))
+        : showModal({
+            title: `\"${activeSchool.name}\"購物車結帳`,
+            icon: 'cloud upload',
+            content: '確定送出購物車內容？',
+            buttons: [{
+                text: '取消'
+            },{
+                text: '送出',
+                icon: 'check',
+                color: 'green',
+                act: cartSubmitAct
+            }]
+        })
+
+    dispatch(act)
+}
+
+const cartClear = (param) => (dispatch,getState) => {
+    const { list } = getState().cart
+    
+    if (list.length) dispatch(showModal({
+        title: '清空購物車內容',
+        icon: 'trash alternate outline',
+        content: `確定清空${list.length}筆購買項目？`,
+        buttons: [{
+            text: '取消'
+        },{
+            text: '確定',
+            color: 'red',
+            icon: 'trash alternate outline',
+            act: {
+                type: 'CART_CLEAR'
+            }
+        }]
+    }))
+}
 
 export const footerDispatchers = dispatch => {
 
     const actionMap = {
-        schoolPut,
         schoolCancel,
         backToMain,
         cartPut,

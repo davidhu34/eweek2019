@@ -34,12 +34,6 @@ export const ui = ( state = uiInit, action ) => {
                 ...state,
                 inited: action.success? 1: 0
             }
-        case 'UI_SCHOOL_SET':
-            return {
-                ...state,
-                school: action.school,
-                page: MAIN
-            }
         default:
             return state
     }
