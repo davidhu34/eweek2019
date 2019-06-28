@@ -50,7 +50,7 @@ export const cart = ( state = cartInit, action ) => {
         case 'CART_SUBMIT_END':
             return {
                 ...state,
-                list:[]
+                list: action.success? []: state.list
             }
         case 'CART_CLEAR':
             return {

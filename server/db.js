@@ -42,6 +42,7 @@ module.exports = ( uri ) => {
         schools: schools,
         products: products,
         balance: balance,
+        budget: 1000,
         fetchSchoolList: () => {
             return schoolDB.list({include_docs: true}).then(setListData('schools'))
         },

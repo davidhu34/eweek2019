@@ -20,11 +20,10 @@ const Main = () => {
             <SchoolEditor />
             <PurchaseEditor />
             <CartDisplay />
-            <Loading />
         </Container>
 
         <Footer />
-        
+        <Loading />
         <ModalBase />
     </div>
 }

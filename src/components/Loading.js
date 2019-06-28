@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Container, Loader } from 'semantic-ui-react'
+import { Modal, Container, Loader } from 'semantic-ui-react'
 
-const Loading = ({ ui }) => <Container>
-    {ui.submitting? <Loader size='large' active inline='centered' />: null}
-</Container>
+const Loading = ({ show }) => <Modal basic open={show}>
+    <Loader size='large' active inline='centered' />
+</Modal>
 
 export default connect(
-    ({ ui }) => ({ ui })
+    ({ ui, modal }) => ({ show: !modal.show && ui.submitting })
 )(Loading)

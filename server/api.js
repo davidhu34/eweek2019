@@ -30,7 +30,8 @@ module.exports = (app, db, io) => {
         return { products, schools }
     })
 
-    const refreshTeamBalance = (team) => db.fetchSchoolPurchases(team._id).then( list => {
+    const refreshTeamBalance = (team) => db.fetchSchoolPurchases(team._id)
+    .then( list => {
         let total = 0
         const purchases = list.map( p => {
             const product = db.products[p.product]
@@ -72,11 +73,38 @@ module.exports = (app, db, io) => {
     app.post('/buyall', (req, res, next) => {
         console.log('buying all',JSON.stringify(req.body));
         const { school, purchases } = req.body
-        const list = purchases.map( p => ({ ...p, school }))
-        db.purchaseBulk(list).then( result => {
-            refreshTeamBalance(school)
-            res.send(result)
-        });
+        const team = db.schools[school]
+
+        let cartTotal = 0
+        const list = purchases.map( p => {
+            const count = p.count
+            const product = db.products[p.product]
+            cartTotal += product.price*count
+            return { ...p, school }
+        })
+    
+        refreshTeamBalance(team).then( result => {
+
+            const bal = db.balance[school]
+            if (cartTotal + bal > db.budget) {
+                res.send({
+                    success: false,
+                    message: `餘額不足：\n本次消費${cartTotal}元 | 剩餘額度${db.budget-bal}元`
+                })
+            } else db.purchaseBulk(list).then( result => {
+                refreshTeamBalance(team).then( teamBalance => {
+                    res.send({
+                        success: true,
+                        message: `本次消費${cartTotal}元 | 剩餘額度${db.budget-teamBalance.total}元`
+                    })
+                })
+            })
+
+        }).catch( err => res.send({
+            message: err,
+            success: false
+        }))
+        
     });
 
     app.get('/teamhistory/:team', (req, res) => {

@@ -185,19 +185,41 @@ const cartSubmitAct = (dispatch, getState) => {
         }))
     }).then( res => {
         console.log(res);
-        dispatch({
-            type: 'CART_SUBMIT_END',
-            success: true,
-        })
+        const { success, message } = res.data
+        const submitResultAct = success
+            ? cartSubmitSuccess
+            : cartSubmitFailure
+        dispatch(submitResultAct(message))
     })
-    .catch(err => {
-        dispatch({
-            type: 'CART_SUBMIT_END',
-            error: err,
-            success: false
-        })
-    })
+    .catch(err => dispatch(cartSubmitFailure(error)))
 }
+
+const cartSubmitSuccess = (msg) => showModal({
+    title: '購買成功',
+    icon: 'check circle',
+    content: msg,
+    buttons: [{
+        text: '確定',
+        color: 'blue',
+        act: {
+            type: 'CART_SUBMIT_END',
+            success: true
+        }
+    }]
+})
+
+const cartSubmitFailure = (error) => showModal({
+    title: '購買失敗',
+    icon: 'dont',
+    content: error,
+    buttons: [{
+        text: '好吧',
+        act: {
+            type: 'CART_SUBMIT_END',
+            success: false
+        }
+    }]
+})
 
 const cartSubmit = (param) => showModal({
     title: '確認送出',
