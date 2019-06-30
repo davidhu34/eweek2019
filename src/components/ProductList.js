@@ -4,7 +4,7 @@ import { Container } from 'semantic-ui-react'
 
 import { selectProd } from '../actions'
 
-const ProductList = ({ product, selectProd }) => <Container>
+const ProductList = ({ product, selectProd }) => <Container className='eee'>
     {product.list.map( (prod, index) => <div
         onClick={ (e) => selectProd(index)}
         key={prod.alias}>

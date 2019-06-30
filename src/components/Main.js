@@ -10,12 +10,12 @@ import ModalBase from './ModalBase'
 
 const Main = () => {
     return <div>
-        <Segment color='blue' inverted>
+        <Segment inverted color='orange' className='aaa'>
             <Header inverted textAlign='center'>
-                Eweek 2019 物品補給站
+                EWeek 物品補給站
             </Header>
         </Segment>
-        
+
         <Container>
             <SchoolEditor />
             <PurchaseEditor />

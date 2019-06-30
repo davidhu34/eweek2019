@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Container, List } from 'semantic-ui-react'
+import { Container, List, Button } from 'semantic-ui-react'
 import QrReader from 'react-qr-reader'
 
 import { selectSchool } from '../actions'
@@ -9,7 +9,6 @@ class SchoolList extends Component {
 
     handleScan = (data) => {
         if (!data) return
-
 
         const id = data.substr(data.indexOf('?team=')+6)
         const { school, selectSchool } = this.props
@@ -22,18 +21,21 @@ class SchoolList extends Component {
         }
     }
 
-    handleError = () => {
-
-    }
+    handleError = () => {}
 
     render() {
         const { school, selectSchool } = this.props
         const schoolList = school.list.map( (s, index) => {
+            const selected = school.activeIndex === index
             return <List.Item
                 key={s.alias}
                 onClick={ (e) => selectSchool(index)}
             >
-                {`${s.name} ${school.activeIndex === index? '*': ''}`}
+                <Button basic={!selected}
+                    color='orange'
+                    className='dddd'>
+                    {s.name}
+                </Button>
             </List.Item>
         })
         return <Container>
@@ -43,7 +45,7 @@ class SchoolList extends Component {
                 onError={this.handleError}
                 onScan={this.handleScan}
                 style={{ width: '100%' }} />
-            <List>{schoolList}</List>
+            <List className='ddd'>{schoolList}</List>
         </Container>
     }
 }

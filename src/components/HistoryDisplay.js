@@ -7,8 +7,11 @@ const HistoryDisplay = ({ ui, history }) => {
     return <Container textAlign='center' style={{
         visibility: ui.page === 'HISTORY'? 'visible': 'hidden'
     }}>
-        <Header>{`總共花費: ${total}元`}</Header>
-        <List>
+        <Header className='fff'>
+            {`總共花費：${total} 元`}
+        </Header>
+
+        <List className='ggg'>
         {
             list.map( (history, i) => {
                 const { product, count, key } = history

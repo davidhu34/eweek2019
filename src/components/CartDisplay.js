@@ -11,6 +11,7 @@ const CartDisplay = ({
     visibility: ui.page === 'MAIN'? 'visible': 'hidden'
 }}>
     <Button primary
+        className='bbb'
         size='large'
         onClick={() => editPurchase(null)}>
         <Icon name='cart plus' />新增項目
@@ -25,10 +26,10 @@ const CartDisplay = ({
                 onClick={() => editPurchase(i)}
                 content={`${product.name} ${count}個 共${product.price*count}元`}
             />
-            
+
             <Button icon circular inverted
                 onClick={ () => deletePurchase(i,purchase)}>
-                <Icon color='red' name='remove' />
+                <Icon color='red' name='trash' />
             </Button>
 
         </List.Item>

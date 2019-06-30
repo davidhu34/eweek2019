@@ -1,0 +1,231 @@
+body {
+	font-family: 'Quicksand', "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic", "メイリオ", sans-serif !important;
+}
+
+.ui.inverted.orange.segment {
+	background-color: #F39802 !important;
+}
+
+.ui.orange.inverted.segment.aaa {
+	display: block;
+	position: relative;
+	height: 60px;
+	line-height: 60px;
+	text-align: center;
+	padding: 7px 0;
+	font-size: 18px;
+	color: #FFF;
+	box-sizing: border-box;
+	box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+	width: 80%;
+	margin: 20px auto;
+}
+
+.ui.orange.inverted.segment.aaa div {
+	margin: 0;
+	padding: 0 30px;
+	border-top: dashed 2px rgba(255, 255, 255, 0.5);
+	border-bottom: dashed 2px rgba(255, 255, 255, 0.5);
+	line-height: 42px;
+	font-size: 20px;
+	font-weight: normal;
+}
+
+.ui.orange.inverted.segment.aaa:before, .ui.orange.inverted.segment.aaa:after {
+	position: absolute;
+	content: '';
+	width: 0px;
+	height: 0px;
+	z-index: 1;
+}
+
+.ui.orange.inverted.segment.aaa:before {
+	top: -2px;
+	left: -2px;
+	border-width: 32px 0px 32px 15px;
+	border-color: transparent transparent transparent #fff;
+	border-style: solid;
+}
+
+.ui.orange.inverted.segment.aaa:after {
+	top: -2px;
+	right: -2px;
+	border-width: 32px 15px 32px 0px;
+	border-color: transparent #fff transparent transparent;
+	border-style: solid;
+}
+
+
+button.ui.large.button.bbb {
+	font-size: 12.5px;
+	padding: 0;
+	padding: 10px 20px;
+	letter-spacing: -1px;
+	font-weight: normal;
+	background-color: #fff;
+	color: #7ABEBE !important;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	margin: 0px 5px;
+	border: 1px solid;
+	box-shadow: 0px 2px 0px 0px #7ABEBE;
+}
+
+button.ui.large.button.bbb.primary {
+	background: #7ABEBE;
+	color: #fff !important;
+	border-color: #7ABEBE;
+	box-shadow: 0px 2px 0px 0px #458c81;
+}
+
+.ui.header.ccc {
+	position: relative;
+	line-height: 1.4;
+	padding:0.25em 1em;
+	display: block;
+	margin: 0 0 30px 0;
+}
+
+.ui.header.ccc:before, .ui.header.ccc:after {
+	content:'';
+	width: 20px;
+	height: 30px;
+	position: absolute;
+	display: inline-block;
+}
+
+.ui.header.ccc:before {
+	border-left: solid 1px #535459;
+	border-top: solid 1px #535459;
+	top:0;
+	left: 0;
+}
+
+.ui.header.ccc:after {
+	border-right: solid 1px #535459;
+	border-bottom: solid 1px #535459;
+	bottom:0;
+	right: 0;
+}
+
+.item button.ui.blue.basic.button {
+	box-shadow: none !important;
+	-webkit-box-shadow: none !important;
+	color: #00355D!important;
+}
+
+.item+.item {
+    border-top: 1px solid #eee;
+}
+
+.item i.red.icon {
+	color: tomato !important;
+}
+
+.ui.list {
+	margin-bottom: 100px !important;
+}
+
+.ui.padded.grid {
+	background: #fff;
+}
+
+.ui.list.ddd > .item {
+	display: inline-block;
+	border: 0px solid #F39802;
+    margin: 10px 5px;
+    color: #F39802;
+}
+
+.eee {
+	text-align: center;
+}
+
+.eee div {
+	display: inline-block;
+    border-radius: 30px;
+    border: 2px solid #7ABEBE;
+    color: #7ABEBE;
+    letter-spacing: -1px;
+    padding: 4px 11px;
+    min-width: 96px;
+    text-align: center;
+    margin: 3px 5px;
+}
+
+.accordion.ui .title {
+	background: #336699;
+    color: #fff !important;
+}
+
+.accordion.ui .title i.dropdown.icon {
+	font-size: 18px;
+    vertical-align: middle;
+    margin: 0 8px;
+}
+
+.accordion.ui .content {
+	border: 2px solid #336699;
+	padding: 0 !important;
+}
+
+.accordion.ui .content .ui.container {
+	padding: 30px 0 !important;
+}
+
+.content+.title {
+	margin-top: 20px;
+}
+
+.ui.statistic > .value {
+	color: #7ABEBE;
+	line-height: 85%;
+}
+
+.ui.horizontal.statistic {
+	align-items: baseline;
+}
+
+.ui.centered.grid > .row {
+	position: static;
+}
+
+.ui.accordion .title~.content {
+	display: block;
+	max-height: 0;
+	overflow: hidden;
+	transition-duration: 0.3s;
+}
+
+.ui.accordion .active.content {
+	max-height: 500px;
+}
+
+.accordion.ui .ui.circular.button {
+	border-radius: 4px;
+	padding: 10px;
+	margin: 0 8px;
+	background: #F39802;
+    color: #fff;
+    font-weight: normal;
+}
+
+.accordion.ui .ui.grid > .row > .column {
+	padding: 0;
+	position: static;
+}
+
+.accordion.ui .ui.grid > [class*="four column"].row > .column {
+	width: auto !important;
+}
+
+.ui.header.fff {
+	font-size: 16px;
+    color: #888;
+}
+
+.ui.list.ggg > .item {
+	text-align: left;
+	color: #00355D !important;
+	padding: 12px 5px;
+}

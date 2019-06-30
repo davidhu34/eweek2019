@@ -34,7 +34,7 @@ export const closeModal = (index) => (dispatch, getState) => {
     const { buttons } = getState().modal
     const button = buttons[index]
     if (button.act) dispatch(button.act)
-    dispatch({ type: 'MODAL_HIDE' })    
+    dispatch({ type: 'MODAL_HIDE' })
 }
 
 export const changePage = (page) => ({
@@ -148,13 +148,14 @@ const cartPutFailure = () => showModal({
     icon: 'dont',
     content: '購買資訊不完整',
     buttons: [{
-        text: '好吧'
+        text: '好吧',
+        color: 'orange'
     }]
 })
 
 const cartPut = (param) => (dispatch, getState) => {
     const { product, count } = getState().purchase
-    
+
     if (product) {
         dispatch({
             type: 'CART_PUT',
@@ -201,7 +202,7 @@ const cartSubmitSuccess = (msg) => showModal({
     content: msg,
     buttons: [{
         text: '確定',
-        color: 'blue',
+        color: 'orange',
         act: {
             type: 'CART_SUBMIT_END',
             success: true
@@ -215,6 +216,7 @@ const cartSubmitFailure = (error) => showModal({
     content: error,
     buttons: [{
         text: '好吧',
+        color: 'orange',
         act: {
             type: 'CART_SUBMIT_END',
             success: false
@@ -244,7 +246,7 @@ const cartSubmit = (param) => (dispatch,getState) => {
             },{
                 text: '送出',
                 icon: 'check',
-                color: 'green',
+                color: 'teal',
                 act: cartSubmitAct
             }]
         })
@@ -254,7 +256,7 @@ const cartSubmit = (param) => (dispatch,getState) => {
 
 const cartClear = (param) => (dispatch,getState) => {
     const { list } = getState().cart
-    
+
     if (list.length) dispatch(showModal({
         title: '清空購物車內容',
         icon: 'trash alternate outline',

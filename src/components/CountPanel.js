@@ -5,12 +5,13 @@ import { Container, Grid, Statistic, Button } from 'semantic-ui-react'
 import { setCount } from '../actions'
 
 const CountPanel = ({ count, setCount }) => <Container textAlign='center'>
-    <Grid centered>
+
+    <Statistic horizontal label={'個'} value={count} />
+
+    <Grid textAlign='center' padded columns={4}>
         <Grid.Row>
-            <Statistic horizontal label={'個'} value={count} />
-        </Grid.Row>
-        <Grid.Row columns={4}>
-            {['-5', '-1', '+1', '+5'].map( value => <Grid.Column key={value}>
+        {['-5', '-1', '+1', '+5'].map( value => {
+            return <Grid.Column key={value}>
                 <Button circular
                     size='large'
                     children={value}
@@ -18,8 +19,10 @@ const CountPanel = ({ count, setCount }) => <Container textAlign='center'>
                         const n = Number(value)
                         const result = Math.max(1, Math.min(count+n, 20))
                         setCount(result)
-                    }} />
-            </Grid.Column>)}
+                    }}
+                />
+            </Grid.Column>
+        })}
         </Grid.Row>
     </Grid>
 </Container>

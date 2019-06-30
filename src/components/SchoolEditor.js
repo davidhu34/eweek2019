@@ -20,6 +20,7 @@ const SchoolEditor = ({ ui, school, chooseSchool, showHistory }) => {
             { activeSchool
                 ? <Button basic
                     size='large'
+                    className='bbb'
                     onClick={() => showHistory(activeSchool._id)}>
                     <Icon name='history' />購買紀錄
                 </Button>
@@ -27,9 +28,11 @@ const SchoolEditor = ({ ui, school, chooseSchool, showHistory }) => {
             }
             <Button basic
                 size='large'
+                className='bbb'
                 onClick={() => chooseSchool()}>
                 <Icon name='qrcode'/>選擇學校
             </Button>
+            <Divider hidden />
         </Fragment>
         : page === EDITSCHOOL? <SchoolList />
         : page === HISTORY? <HistoryDisplay />
@@ -37,9 +40,8 @@ const SchoolEditor = ({ ui, school, chooseSchool, showHistory }) => {
 
     return <Container textAlign='center'>
         <Divider hidden />
-        <Header>{activeSchool? activeSchool.name: ''}</Header>
+        {activeSchool? <Header className='ccc'>{activeSchool.name}</Header>: null}
         {editor}
-        <Divider hidden />
     </Container>
 }
 
