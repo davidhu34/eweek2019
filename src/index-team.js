@@ -1,16 +1,17 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { render } from 'react-dom'
-import { Container, Loader } from 'semantic-ui-react'
+import { Segment, Header, Container, List, Button, Loader } from 'semantic-ui-react'
 import axios from 'axios'
-
 
 import { API_ROOT } from './configs'
 
 class Team extends Component {
 
-    getTeamData = (e) => {
+    getTeamData = (fetching) => {
+        if (fetching) return
+
         this.setState({ fetching: true })
-        return axios.get(`${API_ROOT}/team/${this.state.teamId}`)
+        return axios.get(`${API_ROOT}/teamhistory/${this.state.teamId}`)
         .then( res => {
             const { purchases, team, total } = res.data
             console.log(res.data)
@@ -41,17 +42,46 @@ class Team extends Component {
 
     render() {
         const { team, purchases, total, fetching } = this.state
-        console.log(this.state)
-        return <Container>
-            <p>{`隊伍: ${team? team.name: '-'} 共花費${total || '-'}元`}</p>
+        const items = fetching? []
+        : purchases.map( (purchase, i) => {
+            const { product, count, key } = purchase
+            return <List.Item key={key}>
+                {`${product.name} ${count}個 共${product.price*count}元`}
+            </List.Item>
+        })
 
-            { purchases.map(p => <p key={p.key}>{ p.product + p.count}</p>) }
+        return <div>
+            <Segment inverted color='orange' className='aaa'>
+                <Header inverted textAlign='center'>
+                    EWeek 物品購買紀錄
+                </Header>
+            </Segment>
 
-            { fetching
-                ? <Loader active inline='centered' />
-                : <p onClick={this.getTeamData}>REFRESH</p>
-            }
-        </Container>
+            <Container textAlign='center'>
+                { team
+                    ? <Fragment>
+                        <Header className='ccc'>
+                            {team.name}
+                        </Header>
+                        <Header className='fff'>
+                            {`總共花費：${total} 元`}
+                        </Header>
+                    </Fragment>
+                    : null
+                }
+
+                <Button basic
+                    circular
+                    loading={fetching}
+                    color='blue'
+                    size='big'
+                    icon='sync'
+                    onClick={ () => this.getTeamData(fetching)}
+                />
+
+                <List className='ggg'>{items}</List>
+            </Container>
+        </div>
     }
 }
 
