@@ -192,9 +192,15 @@ const cartSubmitAct = (dispatch, getState) => {
             ? cartSubmitSuccess
             : cartSubmitFailure
         dispatch(submitResultAct(message))
+        dispatch(cartSubmitEnd(success))
     })
     .catch(err => dispatch(cartSubmitFailure(error)))
 }
+
+const cartSubmitEnd = (success) => ({
+    type: 'CART_SUBMIT_END',
+    success: success
+})
 
 const cartSubmitSuccess = (msg) => showModal({
     title: '購買成功',
@@ -202,11 +208,7 @@ const cartSubmitSuccess = (msg) => showModal({
     content: msg,
     buttons: [{
         text: '確定',
-        color: 'orange',
-        act: {
-            type: 'CART_SUBMIT_END',
-            success: true
-        }
+        color: 'orange'
     }]
 })
 
@@ -216,11 +218,7 @@ const cartSubmitFailure = (error) => showModal({
     content: error,
     buttons: [{
         text: '好吧',
-        color: 'orange',
-        act: {
-            type: 'CART_SUBMIT_END',
-            success: false
-        }
+        color: 'orange'
     }]
 })
 

@@ -7,9 +7,8 @@ import { editPurchase, deletePurchase } from '../actions'
 const CartDisplay = ({
     ui, cart,
     editPurchase, deletePurchase
-}) => <Container textAlign='center' style={{
-    visibility: ui.page === 'MAIN'? 'visible': 'hidden'
-}}>
+}) => ui.page !== 'MAIN'? null
+: <Container textAlign='center'>
     <Button primary
         className='bbb'
         size='large'

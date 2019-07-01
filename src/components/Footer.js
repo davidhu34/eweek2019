@@ -14,7 +14,7 @@ class Footer extends Component {
                     text: '取消',
                     onClick: () => this.props.cartCancel()
                 },{
-                    text: '加入',
+                    text: '完成',
                     onClick: () => this.props.cartPut()
                 }]
             case EDITSCHOOL:
