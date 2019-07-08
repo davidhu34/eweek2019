@@ -9,7 +9,7 @@ const fontSizeMapper = word => Math.log2(word.value) * 5;
 
 const rotate = word => 10*(Math.random()-0.5)//word.value % 90;
 
-import { API_ROOT } from './configs'
+import { API_ROOT } from '../configs'
 
 class Dashboard extends Component {
 

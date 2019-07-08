@@ -39,6 +39,8 @@ module.exports = (app, db, io) => {
             total += productTotal
             return {
                 key: p._id,
+                // rev: p._rev,
+                time: p.time,
                 product: product,
                 count: p.count,
                 total: productTotal
@@ -68,6 +70,13 @@ module.exports = (app, db, io) => {
         db.purchase(req.body).then( result => {
             res.send(result.data)
         });
+    });
+
+    app.delete('/refund', (req, res, next) => {
+        console.log('refunding',JSON.stringify(req.body));
+        db.refund(req.body).then( result => {
+            res.send(result.data)
+        })
     });
 
     app.post('/buyall', (req, res, next) => {

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Loader, Accordion } from 'semantic-ui-react'
 
-import { initData, setPurchaseAccordion } from '../actions'
+import { setPurchaseAccordion } from '../actions'
 import { PROD_PANEL_KEY, COUNT_PANEL_KEY } from '../consts'
 
 import { EDITPURCHASE } from '../consts/pages'

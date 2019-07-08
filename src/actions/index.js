@@ -97,6 +97,7 @@ export const selectSchool = (index) => (dispatch, getState) => {
         type: 'SCHOOL_SELECT',
         index: index
     })
+    dispatch({ type: 'CLEAR_HISTORY' })
     dispatch(changePage(MAIN))
 }
 

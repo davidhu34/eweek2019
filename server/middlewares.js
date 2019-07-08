@@ -22,9 +22,10 @@ module.exports = ( app ) => {
     app.use( cookieParser() )
     app.use( compression({}) )
 
+    // only for dev
     app.use( cors() )
 
-/*
+    /*
     app.use( (req, res, next) => {
         let err = new Error('Not Found')
         err.status = 404
@@ -45,5 +46,6 @@ module.exports = ( app ) => {
             message:    err.message,
             error:      {}
         })
-    })*/
+    })
+    */
 }

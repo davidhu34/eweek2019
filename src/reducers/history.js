@@ -7,6 +7,7 @@ const historyInit = {
 export const history = ( state = historyInit, action ) => {
     switch ( action.type ) {
         case 'REFRESH':
+        case 'CLEAR_HISTORY':
             return {
                 ...state,
                 ...historyInit

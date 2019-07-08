@@ -6,11 +6,11 @@ const productInit = {
 export const product = ( state = productInit, action ) => {
     switch ( action.type ) {
         case 'INIT_DATA':
-            return {
+            return action.success? {
                 ...state,
                 activeIndex: null,
                 list: action.products
-            }
+            } : state
         case 'PRODUCT_SELECT':
             return {
                 ...state,

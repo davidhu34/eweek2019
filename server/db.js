@@ -30,12 +30,13 @@ module.exports = ( uri ) => {
         db[attr][doc._id] = doc
         return doc._id
     })
+    
+    const addTime = (obj) => ({ ...obj, time: (new Date()).getTime() })
 
-
-    purchaseDB.fetch({school: 'D'})
-        .then( body => body.rows.map( purchase => purchase.doc ))
-
-
+    const addTimes = (list) => {
+        const t = (new Date()).getTime()
+        return list.map( item => ({ ...item, time: t }))
+    }
 
     const db = {
         cloudant: cloudant,
@@ -56,8 +57,9 @@ module.exports = ( uri ) => {
         }).then( body => body.docs ),
         getSchoolList: () => Object.keys(schools).map(id => schools[id]),
         getProductList: () => Object.keys(products).map(id => products[id]),
-        purchase: (data) => purchaseDB.insert(data).then(res => res),
-        purchaseBulk: (list) => purchaseDB.bulk({ docs: list }).then(res => res)
+        purchase: (data) => purchaseDB.insert(addTime(data)).then(res => res),
+        purchaseBulk: (list) => purchaseDB.bulk({ docs: addTimes(list) }).then(res => res),
+        refund: (data) => purchaseDB.destroy(data._id, data._rev).then(res => res),
     }
 
     return db
