@@ -7,12 +7,14 @@
   "scripts": {
     "start": "node server",
     "dev": "webpack-dev-server --hot",
+    "dev-admin": "webpack-dev-server --config webpack.config.admin.js --hot",
     "dev-dash": "webpack-dev-server --config webpack.config.dash.js --hot",
     "dev-team": "webpack-dev-server --config webpack.config.team.js --hot",
     "build": "webpack -p --config webpack.config.prod.js",
     "build-team": "webpack -p --config webpack.config.team.prod.js",
     "build-dash": "webpack -p --config webpack.config.dash.prod.js",
-    "cf-push": "npm run build && npm run build-team && npm run build-dash && cd server && ibmcloud cf push && cd .."
+    "build-admin": "webpack -p --config webpack.config.admin.prod.js",
+    "cf-push": "npm run build && npm run build-admin && npm run build-team && npm run build-dash && cd server && ibmcloud cf push && cd .."
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

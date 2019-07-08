@@ -7,28 +7,36 @@ module.exports = (app, db, io) => {
         res.sendFile(path.join(__dirname + '/index.html'));
     });
 
-    const refreshDB = () => Promise.all([
+    const getBaseData = () => Promise.all([
         db.fetchSchoolList(),
         db.fetchProductList()
     ]).then( res => {
         console.log('schools and products fetched')
-        let balance = {}
-        const [products,schools] = res
+        const [productList,schoolList] = res
+
         db.getSchoolList().forEach( s => {
-            balance[s._id] = 0;
+            db.balance[s._id] = 0;
         })
-        db.fetchPurchases().then( purchases => {
-            purchases.map( p => {
+
+        return { productList, schoolList }
+    })
+
+    const getAllPurchases = () => db.fetchPurchases()
+        .then( results => {
+            const purchases = results.map( p => {
                 const product = db.products[p.product]
                 const productTotal = p.count * product.price
-                balance[p.school] += productTotal
+                db.balance[p.school] += productTotal
+                return p
             })
-            db.balance = balance
 
-            console.log('refreshed balance', balance)
+            console.log('refreshed balance', db.balance)
+            return purchases
         })
-        return { products, schools }
-    })
+
+    const refreshDB = () => getBaseData()
+        .then( ({ products, schools }) => getAllPurchases() )
+        .then( purchases => purchases )
 
     const refreshTeamBalance = (team) => db.fetchSchoolPurchases(team._id)
     .then( list => {
@@ -63,6 +71,34 @@ module.exports = (app, db, io) => {
 
     app.get('/init-dashboard', (req, res, next) => {
         res.send({ schools: db.getSchoolList(), balance: db.balance })
+    });
+
+    app.get('/init-admin', (req, res, next) => {
+        getAllPurchases().then( purchases => {
+
+            let products = {}
+            Object.values(db.products).map( product => {
+                const key = product._id
+                products[key] = {
+                    key,
+                    rev: product._rev,
+                    name: product.name,
+                    price: product.price
+                }
+            })
+
+            let schools = {}
+            Object.values(db.schools).map( school => {
+                const key = school._id
+                schools[key] = {
+                    key,
+                    rev: school._rev,
+                    name: school.name
+                }
+            })
+
+            res.send({ schools, products, purchases })
+        })
     });
 
     app.post('/buy', (req, res, next) => {
@@ -121,7 +157,7 @@ module.exports = (app, db, io) => {
             message: err,
             success: false
         }))
-        
+
     });
 
     app.get('/teamhistory/:team', (req, res) => {
@@ -146,6 +182,10 @@ module.exports = (app, db, io) => {
 
     app.get('/dashboard', (req, res) => {
         res.sendFile(path.join(__dirname + '/index-dash.html'));
+    });
+
+    app.get('/administrator', (req, res) => {
+        res.sendFile(path.join(__dirname + '/index-admin.html'));
     });
 
     return { refreshDB }
