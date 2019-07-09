@@ -4,20 +4,20 @@ import WordCloud from "react-d3-cloud";
 import io from 'socket.io-client'
 import axios from 'axios'
 
-import { Container, Loader, Pagination, List } from 'semantic-ui-react'
+import { Container, Loader, Pagination, List, Accordion } from 'semantic-ui-react'
 
 import { API_ROOT } from '../configs'
 
 import { PAGE_MAX_PURCHASES } from '../consts'
 
-const SchoolFilter = ({ schools, filter, filterSchool }) => <List>
+const FilterOptions = ({ data, filter, filterAction }) => <List>
     {
 
-        Object.values(schools).map( ({ key, name }) => {
+        Object.values(data).map( ({ key, name }) => {
             const selected = filter[key]
             return <List.Item
                 key={key}
-                onClick={(e) => filterSchool(key)}
+                onClick={(e) => filterAction(key)}
             >
                 { name + (selected?'1':'0')}
             </List.Item>
@@ -25,20 +25,40 @@ const SchoolFilter = ({ schools, filter, filterSchool }) => <List>
     }
 </List>
 
-const ProductFilter = ({ products, filter, filterProduct }) => <List>
-    {
+const FilterArea = (props) => {
+    const { filterKey, data, filter, filterAction } = props
 
-        Object.values(products).map( ({ key, name }) => {
-            const selected = filter[key]
-            return <List.Item
-                key={key}
-                onClick={(e) => filterProduct(key)}
-            >
-                { name + (selected?'1':'0')}
-            </List.Item>
-        })
-    }
-</List>
+    const title = `${filterKey} : ${Object.keys(filter)
+            .map(key => data[key].name)
+            .join(',')}`
+
+    const panels = [{
+        key: filterKey,
+        title: title,
+        content: <Accordion.Content key={filterKey}>
+            <FilterOptions {...props} />
+        </Accordion.Content>
+    }]
+
+    return <Accordion fluid
+        exclusive={false}
+        panels={panels}
+    />
+}
+
+const SchoolFilter = ({ schools, filter, filterSchool }) => <FilterArea
+    filterKey={'SCHOOL'}
+    data={schools}
+    filter={filter}
+    filterAction={filterSchool}
+/>
+
+const ProductFilter = ({ products, filter, filterProduct }) => <FilterArea
+    filterKey={'PRODUCT'}
+    data={products}
+    filter={filter}
+    filterAction={filterProduct}
+/>
 
 const PurchasesList = ({ purchases, deletePurchases }) => <List>
     {
