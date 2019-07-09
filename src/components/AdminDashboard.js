@@ -10,7 +10,7 @@ import { API_ROOT } from '../configs'
 
 import { PAGE_MAX_PURCHASES } from '../consts'
 
-const SchoolFilter = ({schools, filter, filterSchool}) => <List>
+const SchoolFilter = ({ schools, filter, filterSchool }) => <List>
     {
 
         Object.values(schools).map( ({ key, name }) => {
@@ -18,6 +18,21 @@ const SchoolFilter = ({schools, filter, filterSchool}) => <List>
             return <List.Item
                 key={key}
                 onClick={(e) => filterSchool(key)}
+            >
+                { name + (selected?'1':'0')}
+            </List.Item>
+        })
+    }
+</List>
+
+const ProductFilter = ({ products, filter, filterProduct }) => <List>
+    {
+
+        Object.values(products).map( ({ key, name }) => {
+            const selected = filter[key]
+            return <List.Item
+                key={key}
+                onClick={(e) => filterProduct(key)}
             >
                 { name + (selected?'1':'0')}
             </List.Item>
@@ -46,6 +61,7 @@ class AdminDashboard extends Component {
             schools: {},
             products: {},
             purchases: [],
+            union: false,
             filter: {
                 schools: {},
                 products: {}
@@ -86,7 +102,10 @@ class AdminDashboard extends Component {
 
     toggleFilter = (type, key, filter) => {
         let typeFilter = filter[type]
-        typeFilter[key] = !typeFilter[key]
+
+        if (typeFilter[key]) delete typeFilter[key]
+        else typeFilter[key] = true
+
         this.setState({
             filter: {
                 ...filter,
@@ -94,13 +113,34 @@ class AdminDashboard extends Component {
             }
         })
     }
+
     filterSchool = (key, filter) => this.toggleFilter('schools', key, filter)
     filterProduct = (key, filter) => this.toggleFilter('products', key, filter)
 
     handlePaginationChange = (e, { activePage }) => this.setState({ activePage })
 
-    getVisiblePurchases = ({ purchases, activePage }) => {
-        return purchases.slice(PAGE_MAX_PURCHASES*(activePage-1),PAGE_MAX_PURCHASES*activePage)
+    getVisiblePurchases = ({ purchases, activePage, filter, union }) => {
+        const filters = []
+        if (Object.keys(filter.schools).length) {
+            filters.push( p => filter.schools[p.school] )
+        }
+        if (Object.keys(filter.products).length) {
+            filters.push( p => filter.products[p.product] )
+        }
+        const visiblePurchases = filters.length
+            ? [...purchases].filter( purchase => {
+                const defaultValid = !union
+                for (let i = 0; i < filters.length; i++) {
+                    const valid = filters[i](purchase)
+                    if (union && valid) return true
+                    else if (!union && !valid) return false
+                }
+                return defaultValid
+            })
+            : [...purchases]
+
+        return visiblePurchases
+            .slice(PAGE_MAX_PURCHASES*(activePage-1),PAGE_MAX_PURCHASES*activePage)
     }
 
     render() {
@@ -129,6 +169,11 @@ class AdminDashboard extends Component {
                     schools={schools}
                     filter={filter.schools}
                     filterSchool={(key) => this.filterSchool(key, filter)}
+                />
+                <ProductFilter
+                    products={products}
+                    filter={filter.products}
+                    filterProduct={(key) => this.filterProduct(key, filter)}
                 />
                 {pagination}
                 <PurchasesList purchases={purchases} />
