@@ -40,12 +40,14 @@ const ProductFilter = ({ products, filter, filterProduct }) => <List>
     }
 </List>
 
-const PurchasesList = ({purchases}) => <List>
+const PurchasesList = ({ purchases, deletePurchases }) => <List>
     {
 
-        purchases.map( ({ key, count, product, school }) => {
+        purchases.map( purchase => {
+            const { key, count, product, school } = purchase
             return <List.Item key={key}>
                 {count + product.name + product.price + school.name}
+                <b onClick={ (e) => deletePurchases([purchase]) }>DEL</b>
             </List.Item>
         })
     }
@@ -90,6 +92,21 @@ class AdminDashboard extends Component {
                     schools,
                     products,
                     filter,
+                    purchases,
+                    activePage: 1,
+                    totalPages: Math.round(purchases.length/PAGE_MAX_PURCHASES)
+                })
+            })
+            .catch( err => {
+                console.log(err)
+            })
+    }
+
+    deletePurchases = toDelete => {
+        axios.post(API_ROOT+'/refund', { purchases: toDelete })
+            .then( res => {
+                const { purchases } = res.data
+                this.setState({
                     purchases,
                     activePage: 1,
                     totalPages: Math.round(purchases.length/PAGE_MAX_PURCHASES)
@@ -152,9 +169,10 @@ class AdminDashboard extends Component {
         const purchases = this.getVisiblePurchases(this.state).map( p => {
             const { count } = p
             const key = p._id
+            const rev = p._rev
             const product = products[p.product]
             const school = schools[p.school]
-            return { key, count, product, school }
+            return { key, rev, count, product, school }
         })
 
         const pagination = <Pagination
@@ -176,7 +194,9 @@ class AdminDashboard extends Component {
                     filterProduct={(key) => this.filterProduct(key, filter)}
                 />
                 {pagination}
-                <PurchasesList purchases={purchases} />
+                <PurchasesList
+                    purchases={purchases}
+                    deletePurchases={this.deletePurchases}/>
                 {pagination}
             </Container>
         </div>

@@ -108,10 +108,17 @@ module.exports = (app, db, io) => {
         });
     });
 
-    app.delete('/refund', (req, res, next) => {
-        console.log('refunding',JSON.stringify(req.body));
-        db.refund(req.body).then( result => {
-            res.send(result.data)
+    app.post('/refund', (req, res, next) => {
+        console.log('refunding',JSON.stringify(req.body.purchases));
+        const toRefund = req.body.purchases.map( p => ({
+            _id: p.key,
+            _rev: p.rev,
+            _deleted: true
+        }))
+        db.purchaseBulk(toRefund).then( result => {
+            getAllPurchases().then( purchases => {
+                res.send({ purchases })
+            })
         })
     });
 
