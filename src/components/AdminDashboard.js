@@ -10,6 +10,32 @@ import { API_ROOT } from '../configs'
 
 import { PAGE_MAX_PURCHASES } from '../consts'
 
+const SchoolFilter = ({schools, filter, filterSchool}) => <List>
+    {
+
+        Object.values(schools).map( ({ key, name }) => {
+            const selected = filter[key]
+            return <List.Item
+                key={key}
+                onClick={(e) => filterSchool(key)}
+            >
+                { name + (selected?'1':'0')}
+            </List.Item>
+        })
+    }
+</List>
+
+const PurchasesList = ({purchases}) => <List>
+    {
+
+        purchases.map( ({ key, count, product, school }) => {
+            return <List.Item key={key}>
+                {count + product.name + product.price + school.name}
+            </List.Item>
+        })
+    }
+</List>
+
 class AdminDashboard extends Component {
 
     constructor(props) {
@@ -20,6 +46,10 @@ class AdminDashboard extends Component {
             schools: {},
             products: {},
             purchases: [],
+            filter: {
+                schools: {},
+                products: {}
+            },
             activePage: 0,
             totalPages: 0
         }
@@ -36,9 +66,14 @@ class AdminDashboard extends Component {
         axios.get(API_ROOT+'/init-admin')
             .then( res => {
                 const { schools, products, purchases } = res.data
+                const filter = {
+                    schools: {},
+                    products: {}
+                }
                 this.setState({
                     schools,
                     products,
+                    filter,
                     purchases,
                     activePage: 1,
                     totalPages: Math.round(purchases.length/PAGE_MAX_PURCHASES)
@@ -48,6 +83,19 @@ class AdminDashboard extends Component {
                 console.log(err)
             })
     }
+
+    toggleFilter = (type, key, filter) => {
+        let typeFilter = filter[type]
+        typeFilter[key] = !typeFilter[key]
+        this.setState({
+            filter: {
+                ...filter,
+                [type]: typeFilter
+            }
+        })
+    }
+    filterSchool = (key, filter) => this.toggleFilter('schools', key, filter)
+    filterProduct = (key, filter) => this.toggleFilter('products', key, filter)
 
     handlePaginationChange = (e, { activePage }) => this.setState({ activePage })
 
@@ -59,18 +107,14 @@ class AdminDashboard extends Component {
         const container = this.ref.current || {}
         const { offsetWidth, offsetHeight } = container
 
-        console.log(container, this.state)
-
-        const { activePage, totalPages, schools, products } = this.state
+        const { activePage, totalPages, schools, products, filter } = this.state
 
         const purchases = this.getVisiblePurchases(this.state).map( p => {
             const { count } = p
             const key = p._id
             const product = products[p.product]
             const school = schools[p.school]
-            return <List.Item key={key}>
-                {count + product.name + product.price + school.name}
-            </List.Item>
+            return { key, count, product, school }
         })
 
         const pagination = <Pagination
@@ -81,10 +125,13 @@ class AdminDashboard extends Component {
 
         return <div ref={this.ref}>
             <Container>
+                <SchoolFilter
+                    schools={schools}
+                    filter={filter.schools}
+                    filterSchool={(key) => this.filterSchool(key, filter)}
+                />
                 {pagination}
-                <List>
-                    {purchases}
-                </List>
+                <PurchasesList purchases={purchases} />
                 {pagination}
             </Container>
         </div>

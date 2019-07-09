@@ -8,7 +8,7 @@ module.exports = {
   entry: ['./src/index-team'],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle-team.js'
+    filename: 'bundle.js'
   },
   module: {
     rules: [
