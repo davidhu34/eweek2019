@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import io from 'socket.io-client'
 import axios from 'axios'
 
-import { Container, Loader, Pagination } from 'semantic-ui-react'
+import { Container, Loader, Pagination, Button } from 'semantic-ui-react'
 
 import { API_ROOT } from '../../configs'
 import { PAGE_MAX_PURCHASES } from '../../consts'
 
-import PurchaseList from './PurchaseList' 
+import PurchaseList from './PurchaseList'
 import AdminFilters from './AdminFilters'
 import { SIGHUP } from 'constants';
 
@@ -21,28 +21,39 @@ class AdminDashboard extends Component {
             schools: {},
             products: {},
             purchases: [],
+            behind: true,
+
             union: false,
             filter: {
                 schools: {},
                 products: {}
             },
+
             activePage: 0
         }
     }
 
     componentDidMount() {
         this.mounted = true
+        this.socket = this.connectSocket()
+        this.initPurchases()
+    }
+
+    componentWillUnmount() {
+        this.mounted = false
+        if (this.socket) this.socket.disconnect()
+        this.props.setLoader(false)
+    }
+
+    connectSocket = () => {
         const socket = io(API_ROOT)
         socket.on('connect', () => {
             console.log('connected')
         })
-        
-        this.initPurchases()
-    }
-    
-    componentWillUnmount() {
-        this.mounted = false
-        this.props.setLoader(false)
+        socket.on('teamtotal', (balance) => {
+            this.setState({ behind: true })
+        })
+        return socket
     }
 
     initPurchases = (data) => {
@@ -61,6 +72,7 @@ class AdminDashboard extends Component {
                     products,
                     filter,
                     purchases,
+                    behind: false,
                     activePage: 1
                 })
 
@@ -76,10 +88,20 @@ class AdminDashboard extends Component {
         if (this.mounted) {
             this.setState({
                 purchases,
+                behind: false,
                 activePage: 1
             })
             this.props.setLoader(false)
         }
+    }
+
+    refreshPurchases = () => {
+        this.props.setLoader(true)
+        axios.get(API_ROOT+'/init-admin')
+        .then( res => this.setPurchases(res.data.purchases))
+        .catch( err => {
+            console.log(err)
+        })
     }
 
     deletePurchases = toDelete => {
@@ -123,7 +145,8 @@ class AdminDashboard extends Component {
     }
 
     render() {
-        const { activePage, schools, products, filter } = this.state
+        const { activePage, schools, products, filter, behind } = this.state
+        const { loading } = this.props
 
         const filteredPurchases = this.getFilteredPurchases(this.state)
         const purchases = filteredPurchases.slice(
@@ -137,7 +160,7 @@ class AdminDashboard extends Component {
                 const school = schools[p.school]
                 return { key, rev, count, product, school }
             })
-        
+
         const totalPages = Math.round(filteredPurchases.length/PAGE_MAX_PURCHASES)
         const pagination = <Pagination
             activePage={activePage}
@@ -146,6 +169,17 @@ class AdminDashboard extends Component {
         />
 
         return <Container>
+
+            <Button primary
+                circular
+                icon='sync'
+                loading={loading}
+                onClick={ (e) => {
+                    if (!loading) this.refreshPurchases()
+                }}
+                content={behind? 'New Updates': ''}
+            />
+
             <AdminFilters
                 schools={schools}
                 products={products}

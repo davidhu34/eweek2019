@@ -6,7 +6,7 @@ const CART_PUT = 'CART_PUT'
 const CART_CLEAR = 'CART_CLEAR'
 const CART_SUBMIT = 'CART_SUBMIT'
 
-export const PAGE_MAX_PURCHASES = 5
+export const PAGE_MAX_PURCHASES = 10
 
 export const FOOTER_BUTTONS = [
     CART_PUT,

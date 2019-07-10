@@ -36,7 +36,7 @@ module.exports = (app, db, io) => {
 
     const refreshDB = () => getBaseData()
         .then( ({ products, schools }) => getAllPurchases() )
-        .then( purchases => purchases )
+        .then( purchases => io.emit('teamtotal',db.balance) )
 
     const refreshTeamBalance = (team) => db.fetchSchoolPurchases(team._id)
     .then( list => {
@@ -55,7 +55,6 @@ module.exports = (app, db, io) => {
             }
         })
         db.balance[team._id] = total
-        io.emit('teamtotal',db.balance)
         return { purchases, total, team }
     })
 
@@ -101,9 +100,17 @@ module.exports = (app, db, io) => {
         })
     });
 
+    app.get('/refresh-admin', (req, res, next) => {
+        getAllPurchases().then( purchases => {
+            res.send({ purchases })
+        })
+    });
+
     app.post('/buy', (req, res, next) => {
         console.log('buying',JSON.stringify(req.body));
         db.purchase(req.body).then( result => {
+
+            io.emit('teamtotal',db.balance)
             res.send(result.data)
         });
     });
@@ -153,10 +160,13 @@ module.exports = (app, db, io) => {
                 })
             } else db.purchaseBulk(list).then( result => {
                 refreshTeamBalance(team).then( teamBalance => {
+
+                    io.emit('teamtotal',db.balance)
                     res.send({
                         success: true,
                         message: `本次消費${cartTotal}元 | 剩餘額度${db.budget-teamBalance.total}元`
                     })
+
                 })
             })
 

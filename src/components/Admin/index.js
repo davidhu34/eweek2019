@@ -17,9 +17,11 @@ class Admin extends Component {
     setLoader = (show) => this.setState({ showLoader: show })
 
     render() {
+        const loading = this.state.showLoader
         return <Container>
-            <Loading show={this.state.showLoader} />
+            <Loading show={loading} />
             <AdminDashboard
+                loading={loading}
                 setLoader={this.setLoader}
             />
         </Container>
