@@ -9,6 +9,7 @@ import { PAGE_MAX_PURCHASES } from '../../consts'
 
 import PurchaseList from './PurchaseList'
 import AdminFilters from './AdminFilters'
+import AdminStatistics from './AdminStatistics'
 import { SIGHUP } from 'constants';
 
 class AdminDashboard extends Component {
@@ -137,18 +138,21 @@ class AdminDashboard extends Component {
 
     handlePaginationChange = (e, { activePage }) => this.setState({ activePage })
 
-    setFilter = (filter) => {
-        this.setState({
-            filter,
-            activePage: 1
-        })
-    }
+    setFilter = (filter) => this.setState({ filter, activePage: 1 })
 
     render() {
         const { activePage, schools, products, filter, behind } = this.state
         const { loading } = this.props
 
+        let totalAmount = 0
+        let totalTotal = 0
         const filteredPurchases = this.getFilteredPurchases(this.state)
+            .map( p => {
+                totalAmount += p.count
+                totalTotal += products[p.product].price*p.count
+                return p
+            })
+
         const purchases = filteredPurchases.slice(
                 PAGE_MAX_PURCHASES*(activePage-1),
                 PAGE_MAX_PURCHASES*activePage
@@ -162,11 +166,13 @@ class AdminDashboard extends Component {
             })
 
         const totalPages = Math.round(filteredPurchases.length/PAGE_MAX_PURCHASES)
-        const pagination = <Pagination
-            activePage={activePage}
-            totalPages={totalPages}
-            onPageChange={this.handlePaginationChange}
-        />
+        const pagination = totalPages < 2
+            ? null
+            : <Pagination
+                activePage={activePage}
+                totalPages={totalPages}
+                onPageChange={this.handlePaginationChange}
+            />
 
         return <Container>
 
@@ -174,10 +180,10 @@ class AdminDashboard extends Component {
                 circular
                 icon='sync'
                 loading={loading}
+                content={behind? 'New Updates': ''}
                 onClick={ (e) => {
                     if (!loading) this.refreshPurchases()
                 }}
-                content={behind? 'New Updates': ''}
             />
 
             <AdminFilters
@@ -187,12 +193,18 @@ class AdminDashboard extends Component {
                 setFilter={this.setFilter}
             />
 
+            <AdminStatistics
+                totalPurchases={filteredPurchases.length}
+                totalAmount={totalAmount}
+                totalTotal={totalTotal}
+            />
+
             {pagination}
             <PurchaseList
                 purchases={purchases}
                 deletePurchases={this.deletePurchases}
             />
-            {totalPages < 2? null: pagination}
+            {pagination}
         </Container>
     }
 }
