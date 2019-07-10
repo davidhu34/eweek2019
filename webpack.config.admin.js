@@ -22,7 +22,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       inject: true,
-      template: path.resolve(__dirname, 'index.html')
+      template: path.resolve(__dirname, 'index-admin.html')
     }),
     new webpack.NamedModulesPlugin()
   ],

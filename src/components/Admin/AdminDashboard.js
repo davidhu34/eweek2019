@@ -6,72 +6,11 @@ import axios from 'axios'
 
 import { Container, Loader, Pagination, List, Accordion } from 'semantic-ui-react'
 
-import { API_ROOT } from '../configs'
+import { API_ROOT } from '../../configs'
+import { PAGE_MAX_PURCHASES } from '../../consts'
 
-import { PAGE_MAX_PURCHASES } from '../consts'
-
-const FilterOptions = ({ data, filter, filterAction }) => <List>
-    {
-
-        Object.values(data).map( ({ key, name }) => {
-            const selected = filter[key]
-            return <List.Item
-                key={key}
-                onClick={(e) => filterAction(key)}
-            >
-                { name + (selected?'1':'0')}
-            </List.Item>
-        })
-    }
-</List>
-
-const FilterArea = (props) => {
-    const { filterKey, data, filter, filterAction } = props
-
-    const title = `${filterKey} : ${Object.keys(filter)
-            .map(key => data[key].name)
-            .join(',')}`
-
-    const panels = [{
-        key: filterKey,
-        title: title,
-        content: <Accordion.Content key={filterKey}>
-            <FilterOptions {...props} />
-        </Accordion.Content>
-    }]
-
-    return <Accordion fluid
-        exclusive={false}
-        panels={panels}
-    />
-}
-
-const SchoolFilter = ({ schools, filter, filterSchool }) => <FilterArea
-    filterKey={'SCHOOL'}
-    data={schools}
-    filter={filter}
-    filterAction={filterSchool}
-/>
-
-const ProductFilter = ({ products, filter, filterProduct }) => <FilterArea
-    filterKey={'PRODUCT'}
-    data={products}
-    filter={filter}
-    filterAction={filterProduct}
-/>
-
-const PurchasesList = ({ purchases, deletePurchases }) => <List>
-    {
-
-        purchases.map( purchase => {
-            const { key, count, product, school } = purchase
-            return <List.Item key={key}>
-                {count + product.name + product.price + school.name}
-                <b onClick={ (e) => deletePurchases([purchase]) }>DEL</b>
-            </List.Item>
-        })
-    }
-</List>
+import FilterArea from './FilterArea'
+import PurchaseList from './PurchaseList' 
 
 class AdminDashboard extends Component {
 
@@ -88,8 +27,7 @@ class AdminDashboard extends Component {
                 schools: {},
                 products: {}
             },
-            activePage: 0,
-            totalPages: 0
+            activePage: 0
         }
     }
 
@@ -113,8 +51,7 @@ class AdminDashboard extends Component {
                     products,
                     filter,
                     purchases,
-                    activePage: 1,
-                    totalPages: Math.round(purchases.length/PAGE_MAX_PURCHASES)
+                    activePage: 1
                 })
             })
             .catch( err => {
@@ -128,8 +65,7 @@ class AdminDashboard extends Component {
                 const { purchases } = res.data
                 this.setState({
                     purchases,
-                    activePage: 1,
-                    totalPages: Math.round(purchases.length/PAGE_MAX_PURCHASES)
+                    activePage: 1
                 })
             })
             .catch( err => {
@@ -147,7 +83,8 @@ class AdminDashboard extends Component {
             filter: {
                 ...filter,
                 [type]: typeFilter
-            }
+            },
+            activePage: 1
         })
     }
 
@@ -156,7 +93,7 @@ class AdminDashboard extends Component {
 
     handlePaginationChange = (e, { activePage }) => this.setState({ activePage })
 
-    getVisiblePurchases = ({ purchases, activePage, filter, union }) => {
+    getFilteredPurchases = ({ purchases, activePage, filter, union }) => {
         const filters = []
         if (Object.keys(filter.schools).length) {
             filters.push( p => filter.schools[p.school] )
@@ -164,7 +101,8 @@ class AdminDashboard extends Component {
         if (Object.keys(filter.products).length) {
             filters.push( p => filter.products[p.product] )
         }
-        const visiblePurchases = filters.length
+
+        return filters.length
             ? [...purchases].filter( purchase => {
                 const defaultValid = !union
                 for (let i = 0; i < filters.length; i++) {
@@ -175,26 +113,28 @@ class AdminDashboard extends Component {
                 return defaultValid
             })
             : [...purchases]
-
-        return visiblePurchases
-            .slice(PAGE_MAX_PURCHASES*(activePage-1),PAGE_MAX_PURCHASES*activePage)
     }
 
     render() {
         const container = this.ref.current || {}
         const { offsetWidth, offsetHeight } = container
 
-        const { activePage, totalPages, schools, products, filter } = this.state
+        const { activePage, schools, products, filter } = this.state
 
-        const purchases = this.getVisiblePurchases(this.state).map( p => {
-            const { count } = p
-            const key = p._id
-            const rev = p._rev
-            const product = products[p.product]
-            const school = schools[p.school]
-            return { key, rev, count, product, school }
-        })
-
+        const filteredPurchases = this.getFilteredPurchases(this.state)
+        const purchases = filteredPurchases.slice(
+                PAGE_MAX_PURCHASES*(activePage-1),
+                PAGE_MAX_PURCHASES*activePage
+            ).map( p => {
+                const { count } = p
+                const key = p._id
+                const rev = p._rev
+                const product = products[p.product]
+                const school = schools[p.school]
+                return { key, rev, count, product, school }
+            })
+        
+        const totalPages = Math.round(filteredPurchases.length/PAGE_MAX_PURCHASES)
         const pagination = <Pagination
             activePage={activePage}
             totalPages={totalPages}
@@ -203,21 +143,25 @@ class AdminDashboard extends Component {
 
         return <div ref={this.ref}>
             <Container>
-                <SchoolFilter
-                    schools={schools}
+                <FilterArea
+                    filterKey={'SCHOOL'}
+                    data={schools}
                     filter={filter.schools}
-                    filterSchool={(key) => this.filterSchool(key, filter)}
+                    filterAction={(key) => this.filterSchool(key, filter)}
                 />
-                <ProductFilter
-                    products={products}
+                <FilterArea
+                    filterKey={'PRODUCT'}
+                    data={products}
                     filter={filter.products}
-                    filterProduct={(key) => this.filterProduct(key, filter)}
+                    filterAction={(key) => this.filterProduct(key, filter)}
                 />
+
                 {pagination}
-                <PurchasesList
+                <PurchaseList
                     purchases={purchases}
-                    deletePurchases={this.deletePurchases}/>
-                {pagination}
+                    deletePurchases={this.deletePurchases}
+                />
+                {totalPages < 2? null: pagination}
             </Container>
         </div>
     }
