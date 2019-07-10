@@ -1,23 +1,22 @@
 import React, { Component } from 'react'
-import { hot } from 'react-hot-loader'
-import WordCloud from "react-d3-cloud";
 import io from 'socket.io-client'
 import axios from 'axios'
 
-import { Container, Loader, Pagination, List, Accordion } from 'semantic-ui-react'
+import { Container, Loader, Pagination } from 'semantic-ui-react'
 
 import { API_ROOT } from '../../configs'
 import { PAGE_MAX_PURCHASES } from '../../consts'
 
-import FilterArea from './FilterArea'
 import PurchaseList from './PurchaseList' 
+import AdminFilters from './AdminFilters'
+import { SIGHUP } from 'constants';
 
 class AdminDashboard extends Component {
 
     constructor(props) {
         super(props)
+        this.mounted = false
         this.socket = null
-        this.ref = React.createRef();
         this.state = {
             schools: {},
             products: {},
@@ -32,20 +31,31 @@ class AdminDashboard extends Component {
     }
 
     componentDidMount() {
-        this.setState({ canDraw: true })
-
+        this.mounted = true
         const socket = io(API_ROOT)
         socket.on('connect', () => {
             console.log('connected')
         })
+        
+        this.initPurchases()
+    }
+    
+    componentWillUnmount() {
+        this.mounted = false
+        this.props.setLoader(false)
+    }
 
+    initPurchases = (data) => {
+        this.props.setLoader(true)
         axios.get(API_ROOT+'/init-admin')
-            .then( res => {
+        .then( res => {
+            if (this.mounted) {
                 const { schools, products, purchases } = res.data
                 const filter = {
                     schools: {},
                     products: {}
                 }
+
                 this.setState({
                     schools,
                     products,
@@ -53,47 +63,35 @@ class AdminDashboard extends Component {
                     purchases,
                     activePage: 1
                 })
-            })
-            .catch( err => {
-                console.log(err)
-            })
-    }
 
-    deletePurchases = toDelete => {
-        axios.post(API_ROOT+'/refund', { purchases: toDelete })
-            .then( res => {
-                const { purchases } = res.data
-                this.setState({
-                    purchases,
-                    activePage: 1
-                })
-            })
-            .catch( err => {
-                console.log(err)
-            })
-    }
-
-    toggleFilter = (type, key, filter) => {
-        let typeFilter = filter[type]
-
-        if (typeFilter[key]) delete typeFilter[key]
-        else typeFilter[key] = true
-
-        this.setState({
-            filter: {
-                ...filter,
-                [type]: typeFilter
-            },
-            activePage: 1
+                this.props.setLoader(false)
+            }
+        })
+        .catch( err => {
+            console.log(err)
         })
     }
 
-    filterSchool = (key, filter) => this.toggleFilter('schools', key, filter)
-    filterProduct = (key, filter) => this.toggleFilter('products', key, filter)
+    setPurchases = (purchases) => {
+        if (this.mounted) {
+            this.setState({
+                purchases,
+                activePage: 1
+            })
+            this.props.setLoader(false)
+        }
+    }
 
-    handlePaginationChange = (e, { activePage }) => this.setState({ activePage })
+    deletePurchases = toDelete => {
+        this.props.setLoader(true)
+        axios.post(API_ROOT+'/refund', { purchases: toDelete })
+        .then( res => this.setPurchases(res.data.purchases))
+        .catch( err => {
+            console.log(err)
+        })
+    }
 
-    getFilteredPurchases = ({ purchases, activePage, filter, union }) => {
+    getFilteredPurchases = ({ purchases, filter, union }) => {
         const filters = []
         if (Object.keys(filter.schools).length) {
             filters.push( p => filter.schools[p.school] )
@@ -115,10 +113,16 @@ class AdminDashboard extends Component {
             : [...purchases]
     }
 
-    render() {
-        const container = this.ref.current || {}
-        const { offsetWidth, offsetHeight } = container
+    handlePaginationChange = (e, { activePage }) => this.setState({ activePage })
 
+    setFilter = (filter) => {
+        this.setState({
+            filter,
+            activePage: 1
+        })
+    }
+
+    render() {
         const { activePage, schools, products, filter } = this.state
 
         const filteredPurchases = this.getFilteredPurchases(this.state)
@@ -141,30 +145,22 @@ class AdminDashboard extends Component {
             onPageChange={this.handlePaginationChange}
         />
 
-        return <div ref={this.ref}>
-            <Container>
-                <FilterArea
-                    filterKey={'SCHOOL'}
-                    data={schools}
-                    filter={filter.schools}
-                    filterAction={(key) => this.filterSchool(key, filter)}
-                />
-                <FilterArea
-                    filterKey={'PRODUCT'}
-                    data={products}
-                    filter={filter.products}
-                    filterAction={(key) => this.filterProduct(key, filter)}
-                />
+        return <Container>
+            <AdminFilters
+                schools={schools}
+                products={products}
+                filter={filter}
+                setFilter={this.setFilter}
+            />
 
-                {pagination}
-                <PurchaseList
-                    purchases={purchases}
-                    deletePurchases={this.deletePurchases}
-                />
-                {totalPages < 2? null: pagination}
-            </Container>
-        </div>
+            {pagination}
+            <PurchaseList
+                purchases={purchases}
+                deletePurchases={this.deletePurchases}
+            />
+            {totalPages < 2? null: pagination}
+        </Container>
     }
 }
 
-export default hot(module)(AdminDashboard)
+export default AdminDashboard

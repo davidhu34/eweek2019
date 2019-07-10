@@ -4,7 +4,7 @@ import { Container, List, Table } from 'semantic-ui-react'
 
 const PurchaseRow = ({ purchase, deletePurchase }) => {
     const { key, count, product, school } = purchase
-    return <Table.Row key={key}>
+    return <Table.Row>
         <Table.Cell>{school.name}</Table.Cell>
         <Table.Cell>{`${product.name} \$${product.price}`}</Table.Cell>
         <Table.Cell>{count}</Table.Cell>
@@ -29,6 +29,7 @@ const PurchaseList = ({ purchases, deletePurchases }) => <Table>
     {
         purchases.map( purchase => (
             <PurchaseRow
+                key={purchase.key}
                 purchase={purchase}
                 deletePurchase={ (e) => deletePurchases([purchase])}
             />

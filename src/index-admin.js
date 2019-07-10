@@ -1,9 +1,9 @@
 import React from 'react'
 import { render } from 'react-dom'
 
-import AdminDashboard from './components/Admin/AdminDashboard'
+import Admin from './components/Admin'
 
 render(
-    <AdminDashboard />,
+    <Admin />,
     document.getElementById('root')
 )
