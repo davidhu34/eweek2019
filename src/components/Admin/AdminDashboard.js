@@ -10,7 +10,7 @@ import { PAGE_MAX_PURCHASES } from '../../consts'
 import PurchaseList from './PurchaseList'
 import AdminFilters from './AdminFilters'
 import AdminStatistics from './AdminStatistics'
-import { SIGHUP } from 'constants';
+import AdminCSV from './AdminCSV'
 
 class AdminDashboard extends Component {
 
@@ -184,6 +184,12 @@ class AdminDashboard extends Component {
                 onClick={ (e) => {
                     if (!loading) this.refreshPurchases()
                 }}
+            />
+
+            <AdminCSV
+                schools={schools}
+                products={products}
+                purchases={this.state.purchases}
             />
 
             <AdminFilters
