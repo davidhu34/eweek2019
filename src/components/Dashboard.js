@@ -27,8 +27,8 @@ class Dashboard extends Component {
     balanceData = (schools, balance) => schools.map( (s,i) => {
         const value = balance[s._id] || 0// (i+1)*100
         return {
-            text: `${s.name} : ${value.toString()} 元`,
-            value: value+1
+            text: `${s.nickname || s.name} : ${value.toString()} 元`,
+            value: (value+1)*12
         }
     })
 
@@ -61,8 +61,6 @@ class Dashboard extends Component {
         console.log(container, this.state)
         const { offsetWidth, offsetHeight } = container
         return <div ref={this.ref}>
-            <Container>
-                asdfsadfjk
                 { this.state.canDraw
                     ? <WordCloud
                         data={this.state.data}
@@ -71,7 +69,6 @@ class Dashboard extends Component {
                         width={offsetWidth} />
                     : null
                 }
-            </Container>
         </div>
     }
 }

@@ -92,7 +92,8 @@ module.exports = (app, db, io) => {
                 schools[key] = {
                     key,
                     rev: school._rev,
-                    name: school.name
+                    name: school.name,
+                    nickname: school.nickname,
                 }
             })
 

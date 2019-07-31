@@ -37,10 +37,18 @@ const SchoolEditor = ({ ui, school, chooseSchool, showHistory }) => {
         : page === EDITSCHOOL? <SchoolList />
         : page === HISTORY? <HistoryDisplay />
         : null
-
+    
+    const name = activeSchool? activeSchool.name: ''
+    const nickname = activeSchool? activeSchool.nickname: ''
     return <Container textAlign='center'>
         <Divider hidden />
-        {activeSchool? <Header className='ccc'>{activeSchool.name}</Header>: null}
+        {
+            name? <React.Fragment>
+                <Header className='fff'>{nickname || name}</Header>
+                <Header className='ccc'>{name}</Header>
+                </React.Fragment>
+            : null
+        }
         {editor}
     </Container>
 }
