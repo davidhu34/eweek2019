@@ -191,6 +191,12 @@ class AdminDashboard extends Component {
                 products={products}
                 purchases={this.state.purchases}
             />
+            <AdminCSV
+                schools={schools}
+                products={products}
+                purchases={this.state.purchases}
+                singleItem
+            />
 
             <AdminFilters
                 schools={schools}
