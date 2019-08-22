@@ -21,8 +21,8 @@ module.exports = ( uri ) => {
         // failure - error information is in 'err'.
     });
 
-    const schoolDB = cloudant.db.use('school')
-    const productDB = cloudant.db.use('product')
+    const schoolDB = cloudant.db.use('school2')
+    const productDB = cloudant.db.use('product2')
     const purchaseDB = cloudant.db.use('history')
 
     const setListData = (attr) => (body) => body.rows.map(data => {

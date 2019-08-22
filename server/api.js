@@ -3,8 +3,8 @@ const path = require('path')
 
 module.exports = (app, db, io) => {
 
-    app.get('/', (req, res) => {
-        res.sendFile(path.join(__dirname + '/index.html'));
+    app.get('/forvolunteers', (req, res) => {
+        res.sendFile(path.join(__dirname + '/index-vol.html'));
     });
 
     const getBaseData = () => Promise.all([
